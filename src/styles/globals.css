@@ -26,4 +26,18 @@
   --redcarpert-control-focus: #252525;
   --redcarpert-control-focus-dark: #fff;
   --redcarpert-control-duration: 180ms;
+
+  /* Implementation 85: restrained elevation and existing warm surfaces.
+   * Flat content needs no shadow. Reserve raised/floating elevation for
+   * a clear change in visual priority. */
+  --redcarpert-surface-white: #fff;
+  --redcarpert-surface-paper: #fdfbf8;
+  --redcarpert-surface-panel: #fcfaf7;
+  --redcarpert-surface-edge: #e9ded2;
+  --redcarpert-surface-edge-quiet: #f2ede7;
+  --redcarpert-shadow-card: 0 2px 8px rgba(64, 48, 36, .055);
+  --redcarpert-shadow-raised: 0 8px 24px rgba(44, 30, 20, .08), 0 2px 6px rgba(44, 30, 20, .04);
+  --redcarpert-shadow-control: 0 2px 6px rgba(41, 29, 22, .08);
+  --redcarpert-shadow-control-hover: 0 4px 10px rgba(41, 29, 22, .12);
+  --redcarpert-shadow-floating: 0 5px 18px rgb(0 0 0 / 16%);
 }

@@ -40,7 +40,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border-radius: 50%;
-  box-shadow: 0 5px 18px rgb(0 0 0 / 16%);
+  box-shadow: var(--redcarpert-shadow-floating);
   cursor: pointer;
   transition: transform .2s ease, background-color .2s ease;
 }

@@ -57,7 +57,7 @@
   overflow: hidden;
   background: #ede7dd;
   border: 1px solid #e3d7c6;
-  box-shadow: 0 20px 40px rgba(44, 34, 26, .09);
+  box-shadow: var(--redcarpert-shadow-raised);
 }
 .redcarpert-book { position: relative; margin: 0 auto; max-width: 100%; min-width: 0; }
 .redcarpert-book:not(.is-enhanced) { width: min(100%, 430px); aspect-ratio: 5 / 7; }
@@ -311,7 +311,7 @@
   border-radius: 50%;
   background: rgba(253, 251, 248, .93);
   color: var(--redcarpert-control-ink);
-  box-shadow: 0 3px 12px rgba(41, 29, 22, .1);
+  box-shadow: var(--redcarpert-shadow-control);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
@@ -319,7 +319,7 @@
 }
 .redcarpert-book-controls button:not(:disabled):hover {
   background: #fdfbf8;
-  box-shadow: 0 5px 16px rgba(41, 29, 22, .16);
+  box-shadow: var(--redcarpert-shadow-control-hover);
 }
 .redcarpert-book-controls button:not(:disabled):active { box-shadow: inset 0 0 0 1px currentColor; }
 .redcarpert-book-controls button:disabled { opacity: .35; cursor: not-allowed; }
@@ -452,8 +452,9 @@
   max-width: 1040px;
   margin: 0 auto clamp(22px, 3vw, 38px);
   padding: clamp(26px, 5vw, 52px) clamp(16px, 4vw, 48px);
-  border: 1px solid #ebe5dc;
-  background: #fcfaf7;
+  /* The tinted panel already provides separation; retain border geometry. */
+  border: 1px solid transparent;
+  background: var(--redcarpert-surface-panel);
   text-align: center;
 }
 .redcarpert-editorial-panel h2 {
@@ -607,8 +608,8 @@
 .redcarpert-editorial-team-card {
   min-width: 0;
   margin: 0;
-  background: #fff;
-  border: 1px solid #e7e0d8;
+  background: var(--redcarpert-surface-white);
+  border: 1px solid var(--redcarpert-surface-edge-quiet);
   text-align: center;
   overflow: hidden;
 }
@@ -648,8 +649,8 @@
   box-sizing: border-box;
   min-width: 0;
   padding: clamp(var(--redcarpert-space-16), 2.4vw, var(--redcarpert-space-24)) var(--redcarpert-space-16);
-  border: 1px solid #e9ded3;
-  background: #fff;
+  border: 1px solid transparent;
+  background: var(--redcarpert-surface-white);
   text-align: center;
   counter-increment: redcarpert-step;
 }
@@ -815,7 +816,7 @@
   border-radius: 8px !important;
   background: #f8f3ec !important;
   color: #67543f !important;
-  box-shadow: 0 3px 10px rgba(41, 29, 22, .08);
+  box-shadow: var(--redcarpert-shadow-control);
   font-size: 20px !important;
   font-weight: 400 !important;
   line-height: 1 !important;
@@ -855,7 +856,7 @@
   background: #e8ddcf !important;
   border-color: #8f765a !important;
   color: #47392b !important;
-  box-shadow: 0 5px 14px rgba(41, 29, 22, .13);
+  box-shadow: var(--redcarpert-shadow-control-hover);
 }
 #main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button:focus-visible {
   outline: 2px solid var(--redcarpert-control-focus) !important;
@@ -951,9 +952,9 @@
   min-width: 0;
   margin: clamp(20px, 3vw, 30px) auto 0;
   padding: clamp(16px, 3.5vw, 32px);
-  border: 1px solid #e4d9cb;
-  background: #fcfaf7;
-  box-shadow: 0 12px 30px rgba(67, 48, 29, .06);
+  border: 1px solid var(--redcarpert-surface-edge);
+  background: var(--redcarpert-surface-panel);
+  box-shadow: var(--redcarpert-shadow-card);
   text-align: center;
 }
 #main-container .redcarpert-editorial .redcarpert-contact-card-label {

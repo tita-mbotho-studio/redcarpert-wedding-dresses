@@ -58,6 +58,30 @@ try{
    }
    if(route==='/contact-us')assert.equal(spacing.contactGap,width<=560?8:12,width+'px contact card gap');
    assert.equal(spacing.footerGap,width<=640?4:8,width+'px '+route+' footer link gap');
+   // Implementation 85: computed surfaces must resolve to the shared elevation
+   // values; transparent decorative borders still occupy their original space.
+   const surfaceIssues=await page.evaluate(()=>{
+    const issues=[];
+    const probe=document.createElement('div');
+    document.body.append(probe);
+    const expected=token=>{probe.style.boxShadow='var('+token+')';return getComputedStyle(probe).boxShadow;};
+    for(const [selector,token] of [
+     ['.redcarpert-detail-card','--redcarpert-shadow-raised'],
+     ['.redcarpert-contact-card','--redcarpert-shadow-card'],
+     ['.redcarpert-book-shell','--redcarpert-shadow-raised'],
+    ]){
+     for(const el of document.querySelectorAll(selector)){
+      if(getComputedStyle(el).boxShadow!==expected(token))issues.push(selector+' elevation mismatch');
+     }
+    }
+    for(const el of document.querySelectorAll('.redcarpert-editorial-panel,.redcarpert-editorial-steps li')){
+     const style=getComputedStyle(el);
+     if(style.borderTopWidth!=='1px'||style.borderTopColor!=='rgba(0, 0, 0, 0)')issues.push(el.className+' decorative border mismatch');
+    }
+    probe.remove();
+    return issues;
+   });
+   assert.deepEqual(surfaceIssues,[],width+'px '+route+' surface consistency');
    if(listingRoutes.has(route)){
     const layout=await page.locator('#main-container #content-container .content-box.pexeto-woo-columns-4').evaluate(frame=>{
      const grid=frame.querySelector('ul.products[data-catalogue-preview]');

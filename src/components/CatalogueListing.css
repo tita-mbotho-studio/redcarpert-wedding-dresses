@@ -58,14 +58,14 @@
 }
 #main-container ul.products[data-catalogue-preview] li.product {
   box-sizing: border-box;
-  background: #fff;
-  border: 1px solid #f2ede7;
-  box-shadow: 0 6px 24px rgba(64, 48, 36, .055);
+  background: var(--redcarpert-surface-white);
+  border: 1px solid var(--redcarpert-surface-edge-quiet);
+  box-shadow: var(--redcarpert-shadow-card);
   transition: box-shadow 180ms ease;
 }
 #main-container ul.products[data-catalogue-preview] li.product:hover,
 #main-container ul.products[data-catalogue-preview] li.product:focus-within {
-  box-shadow: 0 10px 30px rgba(64, 48, 36, .105);
+  box-shadow: var(--redcarpert-shadow-raised);
 }
 #main-container ul.products[data-catalogue-preview] li.product > a.woocommerce-LoopProduct-link {
   display: flex;
