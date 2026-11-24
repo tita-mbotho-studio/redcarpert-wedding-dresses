@@ -107,17 +107,17 @@ async function cachedOriginalPhoto(product: CatalogueProduct): Promise<{image:Lu
   const name=product.id+"-"+createHash("sha256").update(product.image).digest("hex").slice(0,10);
   const file=path.join(cacheDirectory,name+".png");
   const record=path.join(cacheDirectory,name+".json");
-  let image:Buffer;
   let audit:ImageAuditEntry;
   try {
-    image=await readFile(file);
     audit=JSON.parse(await readFile(record,"utf8")) as ImageAuditEntry;
+    // Inspect the existing file without retaining its encoded bytes in Node.
+    await sharp(file).metadata();
   } catch {
     const original=await downloadLookbookClientImage(product.image,product.id);
     const meta=await sharp(original).metadata();
     validateLookbookPhotoDimensions(meta,product.id);
     if(!meta.width||!meta.height)throw new Error("Unrecognizable lookbook photo "+product.id);
-    image=await prepareOriginalLookbookPhoto(original,product.id);
+    const image=await prepareOriginalLookbookPhoto(original,product.id);
     const final=await sharp(image).metadata();
     if(!final.width||!final.height)throw new Error("Invalid processed lookbook PNG "+product.id);
     // Calculate realistic print DPI from the original-resolution PNG on the A4 page.
@@ -127,7 +127,7 @@ async function cachedOriginalPhoto(product: CatalogueProduct): Promise<{image:Lu
     await mkdir(cacheDirectory,{recursive:true});
     await Promise.all([writeFile(file,image),writeFile(record,JSON.stringify(audit,null,2)+"\n")]);
   }
-  const output=await sharp(image).metadata();
+  const output=await sharp(file).metadata();
   if(output.format!=="png"||!output.width||!output.height||
      !((output.width===audit.width&&output.height===audit.height)||(output.width===audit.height&&output.height===audit.width)))
     throw new Error("Corrupt or resized cached lookbook photo "+product.id);
@@ -141,7 +141,7 @@ async function cachedOriginalPhoto(product: CatalogueProduct): Promise<{image:Lu
     console.warn("[Bridal Edit] "+product.id+": source image "+audit.width+"x"+audit.height+
       " px; estimated "+audit.effectiveDpi+" DPI in PDF. Included without upscaling; higher-resolution photo recommended for print.");
   }
-  return {image:{id:product.id,png:image,width:output.width,height:output.height},audit};
+  return {image:{id:product.id,filePath:file,width:output.width,height:output.height},audit};
 }
 
 /** Print-readiness diagnostics are opt-in; every image is still audited and
