@@ -129,27 +129,37 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
       assert(rendered.some(n=>n.attrs.id==='full-width'),'Contact Us must use About Us content width');
       const contact=JSON.stringify(content);
        const numberLinks=nodes(content.children).filter(n=>n.attrs['data-contact-whatsapp-number']!==undefined);
-       assert.equal(numberLinks.length,2,'one number in Contact Our Team and one beneath the map description');
+       assert.equal(numberLinks.length,1,'Contact Our Team must keep its single WhatsApp number');
+       const numberLink=numberLinks[0];
+       assert.equal(numberLink.tag,'a');
+       assert.equal(numberLink.attrs.href,buildWhatsAppUrl(generalFittingMessage()));
+       assert.equal(numberLink.attrs.target,'_blank');
+       assert.equal(numberLink.attrs.rel,'noopener noreferrer');
+       assert(numberLink.children.includes('+27 68 045 8811'));
        assert.equal(nodes(content.children).filter(n=>n.attrs['data-contact-whatsapp-action']!==undefined).length,0,
-         'remove duplicate Chat on WhatsApp control');
-       for(const control of numberLinks){
-         assert.equal(control.tag,'a');
-         assert.equal(control.attrs.href,buildWhatsAppUrl(generalFittingMessage()));
-         assert.equal(control.attrs.target,'_blank');
-         assert.equal(control.attrs.rel,'noopener noreferrer');
-         assert(control.children.includes('+27 68 045 8811'));
-       }
-       assert.deepEqual(numberLinks[0],numberLinks[1],'map WhatsApp button must exactly duplicate Contact Our Team button');
+         'the obsolete chat duplicate must stay removed');
+       const callLinks=nodes(content.children).filter(n=>n.attrs['data-contact-phone-call']!==undefined);
+       assert.equal(callLinks.length,1,'the map must contain exactly one native telephone action');
+       const phoneCall=callLinks[0];
+       assert.equal(phoneCall.tag,'a');
+       assert.equal(phoneCall.attrs.class,'redcarpert-contact-call');
+       assert.equal(phoneCall.attrs.href,'tel:+27680458811');
+       assert.equal(phoneCall.attrs.target,undefined,'telephone action must not open a new tab');
+       assert.equal(phoneCall.attrs['data-whatsapp-send'],undefined,'Call Us must not redirect through WhatsApp');
+       assert.equal(phoneCall.attrs['aria-label'],'Call Redcarpert Wedding Dresses on +27 68 045 8811');
+       assert.deepEqual(phoneCall.children,[
+         {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us',
+       ]);
        const teamCard=nodes(content.children).find(n=>n.attrs.class==='redcarpert-contact-card');
        assert.equal(nodes(teamCard.children).filter(n=>n.attrs['data-contact-whatsapp-number']!==undefined).length,1);
        const mapPanel=nodes(content.children).find(n=>n.attrs.class==='redcarpert-editorial-panel redcarpert-editorial-location');
        const mapParagraphIndex=mapPanel.children.findIndex(n=>n.tag==='p' && n.children.includes("We're in Pomona, Kempton Park. This map shows the general area."));
        assert(mapParagraphIndex>=0);
-       assert.equal(mapPanel.children[mapParagraphIndex+1].attrs.class,'redcarpert-map-whatsapp',
-         'duplicate number button must appear immediately after the Pomona description');
-       assert.deepEqual(mapPanel.children[mapParagraphIndex+1].children,[numberLinks[1]]);
+       assert.equal(mapPanel.children[mapParagraphIndex+1].attrs.class,'redcarpert-map-call',
+         'Call Us must appear immediately after the Pomona description');
+       assert.deepEqual(mapPanel.children[mapParagraphIndex+1].children,[phoneCall]);
        assert.equal(mapPanel.children[mapParagraphIndex+2].attrs.class,'redcarpert-editorial-map',
-         'the existing map must remain after the WhatsApp control');
+         'the existing map must remain after the telephone call button');
        assert.equal(nodes(content.children).filter(n=>n.attrs['data-redcarpert-icon-cta']==='fitting').length,0,
          'the duplicate hero fitting control must be removed from Contact Us');
       const readText=value=>typeof value==='string'?value:value.children.map(readText).join(' ');
@@ -191,7 +201,8 @@ test('client story typography and Contact Us buttons are centered, fluid and con
   assert.match(css,/\.redcarpert-editorial-story h2\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
   assert.match(css,/\.redcarpert-editorial-story p\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
   assert.match(css,/\.redcarpert-contact-number\s*\{[^}]*width:\s*fit-content;[^}]*max-width:\s*100%;/s);
-  assert.match(css,/\.redcarpert-map-whatsapp\s*\{[^}]*justify-content:\s*center;/s);
+  assert.match(css,/\.redcarpert-map-call\s*\{[^}]*justify-content:\s*center;/s);
+  assert.match(css,/a\.redcarpert-contact-call\s*\{[^}]*background:\s*#f5efe7;[^}]*color:\s*#574634;/s);
   assert(!css.includes('.redcarpert-contact-chat'),'obsolete duplicate-button styling must be removed');
 });
 
