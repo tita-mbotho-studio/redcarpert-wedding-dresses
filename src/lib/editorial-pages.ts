@@ -43,7 +43,7 @@ const contactPhoneCall = () => node("a", {
   "data-contact-phone-call": "",
   href: "tel:+" + WHATSAPP_NUMBER,
   "aria-label": "Call Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
-}, [node("i", { class: "fa-solid fa-phone", "aria-hidden": "true" }, []), "Call Us"]);
+}, [node("i", { class: "fa-solid fa-phone", "aria-hidden": "true" }, []), "Call Us: " + WHATSAPP_DISPLAY_NUMBER]);
 
 function editorialContent(route: EditorialRoute): DocumentNode[] {
   if (route === "/digital-lookbook") return [

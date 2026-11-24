@@ -554,8 +554,8 @@ test('only the two approved published icon CTAs remain; Contact Us uses direct c
  assert(!callLink.includes('data-whatsapp-send') && !callLink.includes('target="_blank"'),
    'Call Us must dial directly instead of redirecting to WhatsApp or a new tab');
  assert(contactHtml.includes('class="redcarpert-map-call"'),'the map call wrapper must exist');
- assert(contactHtml.includes('<i class="fa-solid fa-phone" aria-hidden="true"></i>Call Us</a>'),
-   'the Call Us button must have the modern Font Awesome phone icon');
+ assert(contactHtml.includes('<i class="fa-solid fa-phone" aria-hidden="true"></i>Call Us: +27 68 045 8811</a>'),
+   'the Call Us text must show the modern Font Awesome phone icon and number');
  const distinct=['/product','/wedding-moments','/product/preview/ball-gown-01'];
  for(const route of distinct){
   const html=readFileSync(path.join('dist',route,'index.html'),'utf8');

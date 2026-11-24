@@ -148,7 +148,7 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
        assert.equal(phoneCall.attrs['data-whatsapp-send'],undefined,'Call Us must not redirect through WhatsApp');
        assert.equal(phoneCall.attrs['aria-label'],'Call Redcarpert Wedding Dresses on +27 68 045 8811');
        assert.deepEqual(phoneCall.children,[
-         {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us',
+         {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us: +27 68 045 8811',
        ]);
        const teamCard=nodes(content.children).find(n=>n.attrs.class==='redcarpert-contact-card');
        assert.equal(nodes(teamCard.children).filter(n=>n.attrs['data-contact-whatsapp-number']!==undefined).length,1);
@@ -159,7 +159,7 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
          'Call Us must appear immediately after the Pomona description');
        assert.deepEqual(mapPanel.children[mapParagraphIndex+1].children,[phoneCall]);
        assert.equal(mapPanel.children[mapParagraphIndex+2].attrs.class,'redcarpert-editorial-map',
-         'the existing map must remain after the telephone call button');
+         'the existing map must remain after the telephone contact line');
        assert.equal(nodes(content.children).filter(n=>n.attrs['data-redcarpert-icon-cta']==='fitting').length,0,
          'the duplicate hero fitting control must be removed from Contact Us');
       const readText=value=>typeof value==='string'?value:value.children.map(readText).join(' ');
@@ -202,7 +202,8 @@ test('client story typography and Contact Us buttons are centered, fluid and con
   assert.match(css,/\.redcarpert-editorial-story p\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
   assert.match(css,/\.redcarpert-contact-number\s*\{[^}]*width:\s*fit-content;[^}]*max-width:\s*100%;/s);
   assert.match(css,/\.redcarpert-map-call\s*\{[^}]*justify-content:\s*center;/s);
-  assert.match(css,/a\.redcarpert-contact-call\s*\{[^}]*background:\s*#f5efe7;[^}]*color:\s*#574634;/s);
+  assert.match(css,/a\.redcarpert-contact-call\s*\{[^}]*background:\s*transparent;[^}]*color:\s*#574634;/s);
+  assert.match(css,/a\.redcarpert-contact-call\s*\{[^}]*border:\s*0;[^}]*box-shadow:\s*none;/s);
   assert(!css.includes('.redcarpert-contact-chat'),'obsolete duplicate-button styling must be removed');
 });
 
