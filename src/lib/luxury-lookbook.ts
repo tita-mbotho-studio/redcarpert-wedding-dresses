@@ -1,3 +1,4 @@
+import { PUBLIC_SITE_URL } from "../config/site.ts";
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
 import type { CatalogueProduct } from "../data/catalogue.ts";
@@ -134,7 +135,7 @@ export function createLuxuryLookbookHtml(products: readonly CatalogueProduct[], 
   }
   const logo = imageData(options.logo,"image/png");
   const pages: string[] = [];
-  const website="https://tita-mbotho-studio.github.io/redcarpert-wedding-dresses/";
+  const website=PUBLIC_SITE_URL;
   pages.push(page(1,"cover","cover",
     '<img class="logo" src="'+logo+'" alt="Redcarpert Wedding Dresses logo">'+
     '<div class="goldline" aria-hidden="true"></div>'+
