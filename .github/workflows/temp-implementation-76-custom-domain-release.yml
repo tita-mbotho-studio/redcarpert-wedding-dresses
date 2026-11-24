@@ -13,7 +13,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: deploy approved Implementation 75 and 76 custom domain'
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.event.head_commit.message == 'release: retry verified custom domain publication'
     runs-on: ubuntu-latest
     permissions:
       contents: read
