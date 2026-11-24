@@ -278,6 +278,11 @@ test('release readiness: all public pages have Redcarpert metadata and safe outb
       route+' contains an unapproved WhatsApp/intent destination');
     for(const [,href] of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/gi)){
       assert(!/^(?:javascript:|data:|vbscript:)/i.test(href),route+' unsafe anchor '+href);
+      if(href.startsWith('tel:')){
+        assert.equal(route,'/contact-us','telephone links must stay on Contact Us');
+        assert.equal(href,'tel:+27680458811','Call Us must dial the approved number');
+        continue;
+      }
       if(/^https?:\/\//i.test(href)){
         const outbound=new URL(href.replaceAll('&amp;','&'));
         const host=outbound.hostname.toLowerCase();
@@ -532,22 +537,25 @@ test('only the two approved published icon CTAs remain; Contact Us uses direct c
    'Contact Us must not restore the removed, duplicate fitting CTA');
  const phoneAnchors=[...contactHtml.matchAll(/<a\b[^>]*>/g)].map(x=>x[0])
    .filter(anchor=>anchor.includes('data-contact-whatsapp-number=""'));
- assert.equal(phoneAnchors.length,2,
-   'Contact Us must have one WhatsApp number link in Contact Our Team and one below the map description');
- assert.equal(phoneAnchors[0],phoneAnchors[1],
-   'team and map WhatsApp number links must use identical attributes and destinations');
+ assert.equal(phoneAnchors.length,1,'Contact Our Team must have exactly one native WhatsApp number');
+ const teamNumber=phoneAnchors[0];
+ assert(teamNumber.includes('data-whatsapp-send=""'));
+ assert(teamNumber.includes('href="https://wa.me/27680458811?text='));
+ assert(teamNumber.includes('target="_blank"'));
+ assert(teamNumber.includes('rel="noopener noreferrer"'));
  assert(!contactHtml.includes('data-contact-whatsapp-action=""'),
    'the duplicate Chat on WhatsApp action must remain removed');
- assert(contactHtml.includes('class="redcarpert-map-whatsapp"'),
-   'the map section must contain the duplicated WhatsApp number control');
- for(const anchor of phoneAnchors){
-   assert(anchor.includes('data-whatsapp-send=""'),
-     'both contact number links must be approved native WhatsApp handoffs');
-   assert(anchor.includes('href="https://wa.me/27680458811?text='),
-     'both number links must open WhatsApp with the general fitting message');
-   assert(anchor.includes('target="_blank"'));
-   assert(anchor.includes('rel="noopener noreferrer"'));
- }
+ const callAnchors=[...contactHtml.matchAll(/<a\b[^>]*>/g)].map(x=>x[0])
+   .filter(anchor=>anchor.includes('data-contact-phone-call=""'));
+ assert.equal(callAnchors.length,1,'the map must have exactly one native Call Us link');
+ const callLink=callAnchors[0];
+ assert(callLink.includes('class="redcarpert-contact-call"'));
+ assert(callLink.includes('href="tel:+27680458811"'));
+ assert(!callLink.includes('data-whatsapp-send') && !callLink.includes('target="_blank"'),
+   'Call Us must dial directly instead of redirecting to WhatsApp or a new tab');
+ assert(contactHtml.includes('class="redcarpert-map-call"'),'the map call wrapper must exist');
+ assert(contactHtml.includes('<i class="fa-solid fa-phone" aria-hidden="true"></i>Call Us</a>'),
+   'the Call Us button must have the modern Font Awesome phone icon');
  const distinct=['/product','/wedding-moments','/product/preview/ball-gown-01'];
  for(const route of distinct){
   const html=readFileSync(path.join('dist',route,'index.html'),'utf8');
