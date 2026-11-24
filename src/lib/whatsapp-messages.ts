@@ -1,5 +1,5 @@
 import { catalogueCategories, type CatalogueProduct } from "../data/catalogue.ts";
-import { REPOSITORY_BASE } from "../config/site.ts";
+import { REPOSITORY_BASE, PUBLIC_SITE_ORIGIN } from "../config/site.ts";
 import { displayRentalPriceForDress, displaySalePriceForDress, RENTAL_CONDITION_NOTE } from "./pricing.ts";
 import { modernTraditionPageForDress, type ModernTraditionPage } from "./modern-tradition.ts";
 
@@ -19,8 +19,6 @@ export function generalFittingMessage(): string {
     "Thank you.",
   ].join("\n");
 }
-
-const PUBLIC_SITE_ORIGIN = "https://tita-mbotho-studio.github.io";
 
 /** Public link for a dress; use the central repository base so paths stay correct. */
 export function dressPageUrl(product: CatalogueProduct, modernPage?: ModernTraditionPage): string {
