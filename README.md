@@ -17,7 +17,7 @@ npm run test:dist
 npm run dev
 ```
 
-Visit `http://localhost:5173/redcarpert-wedding-dresses-main/`. Changes to catalogue data or page adapters require restarting `npm run dev` to regenerate the HTML.
+Visit `http://localhost:5173/redcarpert-wedding-dresses/`. Changes to catalogue data or page adapters require restarting `npm run dev` to regenerate the HTML.
 
 ## Data and media
 
@@ -35,14 +35,14 @@ npm run test:dist
 npm run preview -- --port 4173
 ```
 
-The production preview is at `http://localhost:4173/redcarpert-wedding-dresses-main/`. With the preview running, `npm run test:browser` executes Chromium regression checks for the catalogue, galleries, navigation, WhatsApp messages, responsive layouts and interactive lookbook.
+The production preview is at `http://localhost:4173/redcarpert-wedding-dresses/`. With the preview running, `npm run test:browser` executes Chromium regression checks for the catalogue, galleries, navigation, WhatsApp messages, responsive layouts and interactive lookbook.
 
 ## GitHub Pages
 
 The independent repository's public Pages address (after a successful approved deployment) is:
 
-**https://tita-mbotho-studio.github.io/redcarpert-wedding-dresses-main/**
+**https://tita-mbotho-studio.github.io/redcarpert-wedding-dresses/**
 
 The GitHub Pages base is defined in `src/config/site.ts` and reused by Vite and the generator. The production workflow at `.github/workflows/pages.yml` has a manual `workflow_dispatch` trigger only. Commits and pull requests do not deploy automatically. Always run full checks before manually deploying.
 
-****Independent repository migration:** The former forked repository and its published site remain separate. Pages must be enabled and configured to publish with GitHub Actions in the independent repository; keep the original site unchanged until the new address is verified.
+**Independent repository replacement:** This repository will take the original name after the old fork is archived. GitHub Pages should be published through the manual GitHub Actions workflow only after the rename. Keep the former fork until the replacement site and URL are verified.
