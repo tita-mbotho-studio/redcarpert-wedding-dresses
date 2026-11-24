@@ -39,11 +39,11 @@ test('Modern Tradition filter preserves client dress names while switching detai
     const label=element(number,{'data-catalogue-named':''});
     const image=element('',{alt:p.imageAlt});
     const link=element('',{'aria-label':p.name+': view dress photographs',
-      href:'/redcarpert-wedding-dresses-main'+p.previewRoute+'/'});
+      href:'/redcarpert-wedding-dresses'+p.previewRoute+'/'});
     const card={
       dataset:{catalogueCategory:p.category,catalogueCollections:p.collections.join(' '),
         ...(ordinal>=0?{catalogueModernNumber:String(ordinal+1).padStart(2,'0'),
-          catalogueModernHref:'/redcarpert-wedding-dresses-main'+modernTraditionPageForDress(p.id).route+'/'}:{})},
+          catalogueModernHref:'/redcarpert-wedding-dresses'+modernTraditionPageForDress(p.id).route+'/'}:{})},
       hidden:false,classList:{toggle(){}},
       querySelector:selector=>selector==='.redcarpert-catalogue-collection'?header
         :selector==='.redcarpert-catalogue-number'?label
@@ -76,7 +76,7 @@ test('Modern Tradition filter preserves client dress names while switching detai
       assert.equal(r.link.getAttribute('aria-label'),
         r.p.name+': view dress photographs');
       assert.equal(r.image.getAttribute('alt'),r.p.imageAlt);
-      assert.equal(r.link.getAttribute('href'),'/redcarpert-wedding-dresses-main'+modernTraditionPageForDress(r.p.id).route+'/');
+      assert.equal(r.link.getAttribute('href'),'/redcarpert-wedding-dresses'+modernTraditionPageForDress(r.p.id).route+'/');
       assert.equal(r.label.hasAttribute('data-catalogue-named'),true);
     }
     click('ball_gown');
@@ -103,7 +103,7 @@ test('Modern Tradition filter preserves client dress names while switching detai
     onPopState();
     assert.equal(records.filter(r=>!r.card.hidden).length,6);
     assert.equal(records.find(r=>r.p.id==='modern-tradition-04').link.getAttribute('href'),
-      '/redcarpert-wedding-dresses-main/product/preview/modern-tradition-04/');
+      '/redcarpert-wedding-dresses/product/preview/modern-tradition-04/');
   }finally{
     for(const [key,value] of Object.entries(old)){
       if(value===undefined)delete globalThis[key];
