@@ -1,0 +1,387 @@
+/* Implementation 21 — coherent Font Awesome 7 Free icon presentation.
+ * All selectors are scoped to the new controls; brand artwork and captured
+ * typography remain intact.
+ */
+.fa-solid, .fa-brands { font-style: normal; line-height: 1; }
+
+/* Floating WhatsApp is available on all viewport sizes.
+ * Its independent X control dismisses only the widget, never opens WhatsApp. */
+#redcarpert-floating-whatsapp.redcarpert-whatsapp-float {
+  box-sizing: border-box;
+  display: none !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  right: clamp(16px, 2.5vw, 32px) !important;
+  bottom: clamp(16px, 2.5vw, 32px) !important;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  transform: none !important;
+}
+#redcarpert-floating-whatsapp.redcarpert-whatsapp-float[data-ready]:not([hidden]) {
+  display: flex !important;
+}
+#redcarpert-floating-whatsapp.redcarpert-whatsapp-float[hidden] {
+  display: none !important;
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger,
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss {
+  appearance: none;
+  display: grid;
+  box-sizing: border-box;
+  place-items: center;
+  flex: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50%;
+  box-shadow: 0 5px 18px rgb(0 0 0 / 16%);
+  cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease;
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger {
+  width: 54px;
+  height: 54px;
+  border: 1px solid #1cac59;
+  background: #25d366;
+  color: #fff;
+  font-size: 29px;
+  text-decoration: none;
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss {
+  width: 27px;
+  height: 27px;
+  border: 1px solid #dfd9d2;
+  background: #fff;
+  color: #5f5852;
+  font-size: 13px;
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger:hover,
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss:hover {
+  transform: translateY(-2px);
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger:hover {
+  background: #1fb65a;
+}
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger:focus-visible,
+#redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss:focus-visible {
+  outline: 2px solid #3f3a34;
+  outline-offset: 4px;
+}
+/* Resize the two separate controls without changing the green/white brand.
+   Only [hidden] or an explicit close action can hide the floating widget. */
+@media (max-width: 1000px) {
+  #redcarpert-floating-whatsapp.redcarpert-whatsapp-float {
+    right: 20px !important;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+    gap: 5px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger {
+    width: 50px;
+    height: 50px;
+    font-size: 27px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 640px) {
+  #redcarpert-floating-whatsapp.redcarpert-whatsapp-float {
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    gap: 5px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 360px) {
+  #redcarpert-floating-whatsapp.redcarpert-whatsapp-float {
+    right: calc(10px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    gap: 4px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger {
+    width: 46px;
+    height: 46px;
+    font-size: 25px;
+  }
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+  }
+}
+
+/* The fitting link uses the same brand glyph and opens WhatsApp directly. */
+#footer[data-redcarpert-footer] .redcarpert-footer-items a.redcarpert-footer-book {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  max-width: 100%;
+  white-space: nowrap;
+  text-decoration: none;
+}
+#footer[data-redcarpert-footer] .redcarpert-footer-book .fa-whatsapp {
+  flex: none;
+  font-size: 1.12em;
+  line-height: 1;
+}
+#footer[data-redcarpert-footer] .redcarpert-footer-book span {
+  white-space: nowrap;
+}
+
+/* Five approved active footer icons: Instagram, two TikToks, Facebook, WhatsApp. */
+#footer[data-redcarpert-footer] .widget_media_image .social-icons {
+  gap: 4px;
+}
+#footer[data-redcarpert-footer] .widget_media_image .social-icons li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#footer[data-redcarpert-footer] .widget_media_image .social-icons
+.redcarpert-footer-social-link,
+#footer[data-redcarpert-footer] .widget_media_image .social-icons
+.redcarpert-footer-social-whatsapp {
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  place-items: center;
+  color: #d3cec8;
+  background: transparent;
+  font-size: 19px;
+  line-height: 1;
+  text-decoration: none;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-link {
+  opacity: 1;
+  color: #f1f1f1;
+  cursor: pointer;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-link:hover {
+  color: #e1b77e;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-link:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-whatsapp {
+  color: #f1f1f1;
+  cursor: pointer;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-whatsapp:hover {
+  /* Keep all footer socials neutral, including the WhatsApp hover state. */
+  color: #fff;
+}
+#footer[data-redcarpert-footer] .widget_media_image
+.redcarpert-footer-social-whatsapp:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
+}
+@media (max-width: 1000px) {
+  #footer[data-redcarpert-footer] .widget_media_image .social-icons
+  .redcarpert-footer-social-link,
+  #footer[data-redcarpert-footer] .widget_media_image .social-icons
+  .redcarpert-footer-social-whatsapp {
+    font-size: 15px;
+  }
+}
+@media (max-width: 640px) {
+  #footer[data-redcarpert-footer] .widget_media_image .social-icons {
+    gap: 2px;
+  }
+  #footer[data-redcarpert-footer] .widget_media_image .social-icons
+  .redcarpert-footer-social-link,
+  #footer[data-redcarpert-footer] .widget_media_image .social-icons
+  .redcarpert-footer-social-whatsapp {
+    font-size: 12px;
+  }
+  #footer[data-redcarpert-footer] .redcarpert-footer-items
+  a.redcarpert-footer-book {
+    gap: 3px;
+    letter-spacing: -.01em;
+  }
+  #footer[data-redcarpert-footer] .redcarpert-footer-book .fa-whatsapp {
+    font-size: 12px;
+  }
+}
+
+/* Replace inherited pictogram-font arrows with accessible FA icons. */
+/* The obsolete hamburger background/padding were removed at their source.
+ * Keep only the single Font Awesome icon and its natural alignment. */
+#header .mob-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+#header .mob-nav-btn .fa-bars {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: .93em;
+}
+body.redcarpert-home-native .fullpage-scroll-arrow.redcarpert-modern-down-arrow::before {
+  content: none !important;
+}
+body.redcarpert-home-native .fullpage-scroll-arrow .fa-chevron-down {
+  display: inline-block;
+  font-size: .8em;
+}
+#footer[data-redcarpert-footer] .scroll-to-top::before,
+#footer[data-redcarpert-footer] .scroll-to-top::after,
+#footer[data-redcarpert-footer] .scroll-to-top > span::before {
+  content: none !important;
+}
+#footer[data-redcarpert-footer] .scroll-to-top > .fa-arrow-up {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+}
+.wpgis-popup.redcarpert-modern-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.wpgis-popup.redcarpert-modern-zoom::before {
+  content: none !important;
+}
+.wpgis-popup.redcarpert-modern-zoom .fa-solid {
+  font-size: 16px;
+}
+
+/* Icon-only page turns use the same centred 14px chevrons as dress photos.
+   Remove the margins once needed for the old Previous/Next text. */
+.redcarpert-book-controls button > .fa-solid {
+  display: block;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger,
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss,
+  .redcarpert-book-controls button {
+    transition: none;
+  }
+
+}
+
+/* Use matching icon typography for the header, gallery accents and controls. */
+#header #menu-item-15821 > a > .fa-chevron-down {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: .75em;
+  vertical-align: .08em;
+}
+#header #menu-item-15821 > a::after {
+  content: none !important;
+}
+#main-container [data-whatsapp-send] > .fa-whatsapp {
+  display: inline-block;
+  margin-right: .5em;
+  font-size: 1.08em;
+  vertical-align: -.04em;
+}
+#enquiry-preview .actions > button,
+#enquiry-preview .actions > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+#enquiry-preview .actions .fa-solid,
+#enquiry-preview .actions .fa-brands {
+  display: inline-block;
+  font-size: .95em;
+}
+
+/* Implementation 34 — mobile dropdown matches the visible header, rather
+ * than the inherited almost-black overlay. Keep the independent submenu
+ * toggle at the far right; hide only the redundant chevron after the label. */
+@media (max-width: 1000px) {
+  /* Centre the single icon in its own 44px header control column, with
+   * a generous tap target and no inherited Menu-label spacing. */
+  #header .mobile-nav {
+    box-sizing: border-box;
+    display: flex;
+    float: right;
+    /* Protect the full tap target when the 320px header gets crowded. */
+    flex: 0 0 44px;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    align-items: center;
+    justify-content: center;
+  }
+  #header .mobile-nav .mob-nav-btn {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0 !important;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  #header .mobile-nav .mob-nav-btn > .fa-solid {
+    display: block;
+    flex: none;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+  }
+  #header .mobile-nav:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  /* Interior pages must match their rendered black header wrapper,
+     without altering the homepage's translucent dropdown below. */
+  #header .mob-nav-menu {
+    background: #000 !important;
+  }
+
+  /* The homepage header is a 50%-opaque black overlay over its photos. */
+  body.redcarpert-home-native #header .mob-nav-menu {
+    background: rgba(0, 0, 0, .50) !important;
+  }
+
+  /* The right-hand .mob-nav-arrow remains the functional category toggle. */
+  #header .mob-nav-menu #menu-item-15821 > a > .fa-chevron-down {
+    display: none !important;
+  }
+}

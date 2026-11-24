@@ -1,0 +1,113 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { catalogueProducts, catalogueCategories } from '../src/data/catalogue.ts';
+import { initializeCatalogueFilter } from '../src/client/catalogue-filter.js';
+import { modernTraditionPageForDress } from '../src/lib/modern-tradition.ts';
+
+const element=(text='',attrs={})=>{
+  const attributes=new Map(Object.entries(attrs));
+  return {
+    textContent:text,
+    getAttribute:key=>attributes.get(key)??null,
+    setAttribute:(key,value)=>attributes.set(key,String(value)),
+    hasAttribute:key=>attributes.has(key),
+    toggleAttribute:(key,enabled)=>enabled?attributes.set(key,''):attributes.delete(key),
+  };
+};
+
+test('Modern Tradition filter preserves client dress names while switching detail links',()=>{
+  const old={document:globalThis.document,window:globalThis.window,
+    location:globalThis.location,history:globalThis.history};
+  const buttons=catalogueCategories.map(c=>({dataset:{filterCategory:c.id},
+    setAttribute(){},closest(){return this;}}));
+  buttons.unshift({dataset:{filterCategory:'all'},setAttribute(){},closest(){return this;}});
+  const visibleStatus=element();
+  let onClick, onPopState;
+  const controls={
+    dataset:{},
+    querySelectorAll:()=>buttons,
+    querySelector:()=>visibleStatus,
+    addEventListener:(name,handler)=>{if(name==='click')onClick=handler;},
+    contains:()=>true,
+  };
+  const records=catalogueProducts.map(p=>{
+    const ordinal=catalogueProducts.filter(x=>x.collections.includes('modern_tradition'))
+      .findIndex(x=>x.id===p.id);
+    const number=p.name;
+    const collection=catalogueCategories.find(c=>c.id===p.category).name.replace(/ Dresses$/,'');
+    const header=element(collection);
+    const label=element(number,{'data-catalogue-named':''});
+    const image=element('',{alt:p.imageAlt});
+    const link=element('',{'aria-label':p.name+': view dress photographs',
+      href:'/redcarpert-wedding-dresses'+p.previewRoute+'/'});
+    const card={
+      dataset:{catalogueCategory:p.category,catalogueCollections:p.collections.join(' '),
+        ...(ordinal>=0?{catalogueModernNumber:String(ordinal+1).padStart(2,'0'),
+          catalogueModernHref:'/redcarpert-wedding-dresses'+modernTraditionPageForDress(p.id).route+'/'}:{})},
+      hidden:false,classList:{toggle(){}},
+      querySelector:selector=>selector==='.redcarpert-catalogue-collection'?header
+        :selector==='.redcarpert-catalogue-number'?label
+        :selector==='img'?image
+        :selector==='a.woocommerce-LoopProduct-link'?link:null,
+    };
+    return {p,card,header,label,image,link,original:{number,collection,alt:p.imageAlt,
+      aria:link.getAttribute('aria-label'),href:link.getAttribute('href'),
+      named:label.hasAttribute('data-catalogue-named')}};
+  });
+  const grid={querySelectorAll:()=>records.map(r=>r.card)};
+  globalThis.document={querySelector:selector=>selector==='[data-catalogue-filter]'?controls
+    :selector==='ul.products[data-catalogue-preview]'?grid:null};
+  globalThis.location={href:'https://example.test/product/',search:''};
+  globalThis.history={pushState:(_state,_title,uri)=>{globalThis.location.href=uri;
+    globalThis.location.search=new URL(uri).search;}};
+  globalThis.window={addEventListener:(name,handler)=>{if(name==='popstate')onPopState=handler;}};
+
+  try{
+    initializeCatalogueFilter();
+    assert.equal(visibleStatus.textContent,'Showing 53 of 53 wedding dresses');
+    const click=id=>onClick({target:buttons.find(b=>b.dataset.filterCategory===id)});
+    click('modern_tradition');
+    const shown=records.filter(r=>!r.card.hidden);
+    assert.equal(shown.length,6);
+    assert.equal(visibleStatus.textContent,'Showing 6 of 53 wedding dresses');
+    for(const r of shown){
+      assert.equal(r.header.textContent,'Modern Tradition');
+      assert.equal(r.label.textContent,r.p.name);
+      assert.equal(r.link.getAttribute('aria-label'),
+        r.p.name+': view dress photographs');
+      assert.equal(r.image.getAttribute('alt'),r.p.imageAlt);
+      assert.equal(r.link.getAttribute('href'),'/redcarpert-wedding-dresses'+modernTraditionPageForDress(r.p.id).route+'/');
+      assert.equal(r.label.hasAttribute('data-catalogue-named'),true);
+    }
+    click('ball_gown');
+    assert.equal(records.filter(r=>!r.card.hidden).length,16,
+      'Ball Gown category must retain all sixteen client dresses');
+    assert.equal(visibleStatus.textContent,'Showing 16 of 53 wedding dresses');
+    click('ruffled');
+    const shownRuffled=records.filter(r=>!r.card.hidden);
+    assert.equal(shownRuffled.length,6,'Ruffled filter must show all six client dresses');
+    assert(shownRuffled.every(r=>r.p.category==='ruffled'));
+    assert.equal(visibleStatus.textContent,'Showing 6 of 53 wedding dresses');
+    click('all');
+    assert.equal(records.filter(r=>!r.card.hidden).length,53);
+    assert.equal(visibleStatus.textContent,'Showing 53 of 53 wedding dresses');
+    for(const r of records){
+      assert.equal(r.header.textContent,r.original.collection);
+      assert.equal(r.label.textContent,r.original.number);
+      assert.equal(r.image.getAttribute('alt'),r.original.alt);
+      assert.equal(r.link.getAttribute('aria-label'),r.original.aria);
+      assert.equal(r.link.getAttribute('href'),r.original.href);
+      assert.equal(r.label.hasAttribute('data-catalogue-named'),r.original.named);
+    }
+    globalThis.location.search='?category=modern_tradition';
+    onPopState();
+    assert.equal(records.filter(r=>!r.card.hidden).length,6);
+    assert.equal(records.find(r=>r.p.id==='modern-tradition-04').link.getAttribute('href'),
+      '/redcarpert-wedding-dresses/product/preview/modern-tradition-04/');
+  }finally{
+    for(const [key,value] of Object.entries(old)){
+      if(value===undefined)delete globalThis[key];
+      else globalThis[key]=value;
+    }
+  }
+});

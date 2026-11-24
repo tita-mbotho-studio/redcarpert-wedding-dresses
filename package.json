@@ -1,0 +1,41 @@
+{
+  "name": "redcarpert-wedding-dresses",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Official Redcarpert Wedding Dresses bridal catalogue",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tita-mbotho-studio/redcarpert-wedding-dresses.git"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "tsx scripts/generate.ts && vite --host 0.0.0.0",
+    "build": "tsx scripts/generate.ts && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "start": "npm run preview",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "lint": "eslint src scripts vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run build && npm test",
+    "setup": "playwright install chromium",
+    "test:dist": "node --test tests/static-build.test.mjs",
+    "test:browser": "node scripts/browser-lookbook.mjs && node scripts/browser-catalogue-cards.mjs && node scripts/browser-media-delivery.mjs && node scripts/browser-wedding-moments.mjs && node scripts/browser-footer-parity.mjs && node scripts/browser-modern-icons.mjs && node scripts/browser-editorial-layout.mjs && node scripts/browser-homepage-native.mjs && node scripts/browser-global-loader.mjs && node scripts/browser-whatsapp.mjs && node scripts/browser-dress-gallery.mjs && node scripts/browser-check.mjs && node scripts/browser-interactions.mjs && node scripts/browser-touch.mjs && node scripts/browser-lookbook-enhanced.mjs",
+    "media:audit": "tsx scripts/preflight-image-cache.mjs --audit-only",
+    "media:prepare": "tsx scripts/preflight-image-cache.mjs --warm"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "eslint": "^9",
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.61.1",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.35.5",
+    "tsx": "^4.20.0",
+    "typescript": "^5",
+    "typescript-eslint": "^8",
+    "vite": "^7.3.0"
+  },
+  "type": "module"
+}

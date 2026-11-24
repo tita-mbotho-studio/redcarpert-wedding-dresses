@@ -1,0 +1,169 @@
+/* The Cormorant Garamond stylesheet is loaded in <head> on catalogue routes.
+   An @import inside the combined site CSS is invalid after preceding rules. */
+
+/* One editorial card for the main catalogue and all five collections.
+   Preserve the approved grid, square crops, image sources and linked routes. */
+
+/* Implementation 58: use source-order CSS Grid instead of inherited
+   WooCommerce floats. Its mobile nth-child(2n) rule floats even-numbered
+   products right, including after earlier products are hidden by filtering.
+   That leaves the first visible dress in the second column. */
+#main-container ul.products[data-catalogue-preview] {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: row;
+  column-gap: 3.8%;
+  row-gap: clamp(24px, 3vw, 42px);
+  align-items: stretch;
+  width: 100%;
+  padding: 0;
+  list-style: none;
+}
+/* WooCommerce inserts clearfix pseudo-elements that would otherwise take
+   up real grid cells, shifting the first photograph into column two. */
+#main-container ul.products[data-catalogue-preview]::before,
+#main-container ul.products[data-catalogue-preview]::after {
+  content: none !important;
+  display: none !important;
+}
+/* Override both the original four-column floats and the responsive
+   [class*=columns-] li.product:nth-child(2n) float/clear rules. */
+#main-container ul.products[data-catalogue-preview] > li.product {
+  float: none !important;
+  clear: none !important;
+  display: block;
+  position: relative;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+/* Explicitly honor hidden cards. An authored li { display: block } can
+   override the browser's lower-priority [hidden] display rule. */
+#main-container ul.products[data-catalogue-preview] > li.product[hidden],
+#main-container ul.products[data-catalogue-preview] > li.product.redcarpert-filtered-out {
+  display: none !important;
+}
+@media (max-width: 1000px) {
+  #main-container ul.products[data-catalogue-preview] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  #main-container ul.products[data-catalogue-preview] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+#main-container ul.products[data-catalogue-preview] li.product {
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #f2ede7;
+  box-shadow: 0 6px 24px rgba(64, 48, 36, .055);
+  transition: box-shadow 180ms ease;
+}
+#main-container ul.products[data-catalogue-preview] li.product:hover,
+#main-container ul.products[data-catalogue-preview] li.product:focus-within {
+  box-shadow: 0 10px 30px rgba(64, 48, 36, .105);
+}
+#main-container ul.products[data-catalogue-preview] li.product > a.woocommerce-LoopProduct-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  text-decoration: none !important;
+}
+#main-container ul.products[data-catalogue-preview] li.product > a.woocommerce-LoopProduct-link:focus-visible {
+  outline: 2px solid #9a7652;
+  outline-offset: 3px;
+}
+#main-container ul.products[data-catalogue-preview] li.product .woocommerce-loop-product__title.redcarpert-catalogue-title {
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  min-height: 116px;
+  margin: 0 !important;
+  padding: 14px 9px 16px !important;
+  text-align: center !important;
+  text-transform: none !important;
+  color: #493d36 !important;
+  background: #fff;
+}
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-collection {
+  display: block;
+  width: 100%;
+  color: #493d36;
+  font: 500 clamp(22px, 2.15vw, 30px)/1.12 "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  letter-spacing: .005em;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-divider {
+  display: block;
+  flex: 0 0 1px;
+  width: 58px;
+  height: 1px;
+  margin: 5px 0;
+  background: #b39169;
+}
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number {
+  display: block;
+  color: #a07e56;
+  font: 500 12px/1.3 Montserrat, "Open Sans", sans-serif;
+  letter-spacing: .22em;
+  padding-left: .22em;
+  text-align: center;
+}
+/* Named client dresses use the same centered card, with readable name
+   tracking rather than treating long names as two-digit dress numbers. */
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number[data-catalogue-named] {
+  font-size: clamp(11px, 1.05vw, 13px);
+  letter-spacing: .035em;
+  padding: 0 7px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number[data-catalogue-named] {
+    font-size: 11px;
+    letter-spacing: .015em;
+  }
+}
+/* Keep the already-approved square photo crop unchanged. */
+.woocommerce ul.products[data-catalogue-preview] li.product a.woocommerce-LoopProduct-link > img,
+.woocommerce-page ul.products[data-catalogue-preview] li.product a.woocommerce-LoopProduct-link > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center 25%;
+  margin: 0 !important;
+}
+@media (max-width: 640px) {
+  #main-container ul.products[data-catalogue-preview] li.product .woocommerce-loop-product__title.redcarpert-catalogue-title {
+    min-height: 110px;
+    gap: 4px;
+    padding: 12px 6px 14px !important;
+  }
+  #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-collection {
+    font-size: clamp(20px, 5.6vw, 25px);
+    line-height: 1.07;
+  }
+  #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-divider {
+    width: 48px;
+    margin: 4px 0;
+  }
+  #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #main-container ul.products[data-catalogue-preview] li.product { transition: none; }
+}
+

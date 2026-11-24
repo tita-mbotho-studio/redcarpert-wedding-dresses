@@ -1,0 +1,260 @@
+import { setMediaImage, preloadMediaImage } from './MediaDelivery.js';
+
+/**
+ * Dress Details: one active photograph, optional multi-photo navigation, and
+ * the approved Wedding Moments-style image modal. No hover zoom or Fancybox.
+ */
+export function initializeDressGalleries() {
+  for (const gallery of document.querySelectorAll('[data-detail-gallery]')) {
+    if (gallery.dataset.galleryReady === 'true') continue;
+    gallery.dataset.galleryReady = 'true';
+
+    let photos;
+    try {
+      photos = JSON.parse(gallery.getAttribute('data-gallery-media') || gallery.getAttribute('data-gallery-photos') || '[]');
+    } catch {
+      console.error('Invalid dress photo gallery metadata');
+      continue;
+    }
+    if (!Array.isArray(photos) || photos.length < 1 ||
+        photos.some(photo => !photo || typeof photo.url !== 'string' || typeof photo.alt !== 'string' ||
+          (photo.type && photo.type !== 'photo' && photo.type !== 'video'))) {
+      console.error('Incomplete dress photo gallery metadata');
+      continue;
+    }
+
+    const image = gallery.querySelector('[data-gallery-active-image]');
+    const video = gallery.querySelector('[data-gallery-active-video]');
+    const frame = gallery.querySelector('[data-dress-frame]');
+    const dialog = document.querySelector('[data-dress-photo-dialog]');
+    const preview = dialog?.querySelector('[data-dress-preview-photo]');
+    const close = dialog?.querySelector('[data-dress-preview-close]');
+    if (!image || !frame || !dialog || !preview || !close ||
+        (photos.some(item => item.type === 'video') && !video)) {
+      console.error('Incomplete dress photo modal controls');
+      continue;
+    }
+
+    let currentIndex = 0;
+    let requestedIndex = 0;
+    let navigationRequest = 0;
+    let opener = null;
+    let pointerOpened = false;
+    let suppressClickUntil = 0;
+    let pointerStart = null;
+
+    const currentPhoto = () => photos[currentIndex];
+    const isVideo = item => item.type === 'video';
+    const setActive = (index, readyUrl) => {
+      const wasVideo = isVideo(currentPhoto());
+      currentIndex = index;
+      const item = currentPhoto();
+      if (isVideo(item)) {
+        image.hidden = true;
+        video.hidden = false;
+        gallery.dataset.activeMedia = 'video';
+      } else {
+        if (video && wasVideo) video.pause();
+        if (video) video.hidden = true;
+        // readyUrl has completed loading AND decoding; swapping it cannot flash
+        // the initial photograph during a slow ImageKit network request.
+        setMediaImage(image, item.url, 'detail', readyUrl);
+        image.alt = item.alt;
+        image.setAttribute('aria-label', 'Enlarge photograph ' + (currentIndex + 1) + ' of ' + photos.length);
+        image.hidden = false;
+        gallery.dataset.activeMedia = 'photo';
+      }
+      gallery.dataset.activePhoto = String(currentIndex);
+    };
+
+    const openModal = (viaPointer = false) => {
+      if (dialog.open || isVideo(currentPhoto())) return;
+      const photo = currentPhoto();
+      opener = image;
+      pointerOpened = viaPointer;
+      dialog.classList.toggle('redcarpert-dress-pointer-opened', viaPointer);
+      preview.alt = photo.alt;
+      // Reuse the shared on-demand high-resolution delivery, with central
+      // original-URL fallback if a CDN derivative cannot be loaded.
+      setMediaImage(preview, photo.url, 'preview');
+      dialog.showModal();
+      close.focus({preventScroll:true});
+    };
+
+    // The photo, not the ivory margins or gallery frame, activates the viewer.
+    image.addEventListener('click', event => {
+      if (performance.now() < suppressClickUntil) {
+        event.preventDefault();
+        return;
+      }
+      openModal(event.detail !== 0);
+    });
+    image.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      event.stopPropagation();
+      openModal();
+    });
+
+    // A drag or swipe must not produce a synthetic click that opens the modal.
+    image.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerStart = {id:event.pointerId,x:event.clientX,y:event.clientY,moved:false};
+    });
+    image.addEventListener('pointermove', event => {
+      if (!pointerStart || event.pointerId !== pointerStart.id) return;
+      if (Math.hypot(event.clientX - pointerStart.x,event.clientY - pointerStart.y) > 8)
+        pointerStart.moved = true;
+    });
+    image.addEventListener('pointerup', event => {
+      if (!pointerStart || event.pointerId !== pointerStart.id) return;
+      if (pointerStart.moved ||
+          Math.hypot(event.clientX - pointerStart.x,event.clientY - pointerStart.y) > 8)
+        suppressClickUntil = performance.now() + 500;
+      pointerStart = null;
+    });
+    image.addEventListener('pointercancel', () => {pointerStart=null;});
+
+    close.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+      preview.removeAttribute('src');
+      preview.removeAttribute('data-media-original');
+      preview.alt = '';
+      dialog.classList.remove('redcarpert-dress-pointer-opened');
+      if (opener?.isConnected) {
+        const restored = opener;
+        if (pointerOpened) {
+          restored.classList.add('redcarpert-dress-pointer-restored');
+          restored.addEventListener('blur', () => {
+            restored.classList.remove('redcarpert-dress-pointer-restored');
+          }, {once:true});
+        }
+        restored.focus({preventScroll:true});
+      }
+      opener = null;
+      pointerOpened = false;
+    });
+
+    const hasMultiple = photos.length > 1;
+    if (!hasMultiple) {
+      gallery.dataset.activePhoto = '0';
+      image.setAttribute('aria-label', 'Enlarge photograph 1 of 1');
+      continue;
+    }
+
+    const previous = gallery.querySelector('[data-gallery-previous]');
+    const next = gallery.querySelector('[data-gallery-next]');
+    const counter = gallery.querySelector('[data-gallery-counter]');
+    const dots = [...gallery.querySelectorAll('[data-gallery-index]')];
+    if (!previous || !next || !counter || dots.length !== photos.length) {
+      console.error('Incomplete dress photo gallery navigation');
+      continue;
+    }
+    const updateIndicators = () => {
+      counter.textContent = String(currentIndex + 1).padStart(2,'0') +
+        ' / ' + String(photos.length).padStart(2,'0');
+      dots.forEach((dot,index) => {
+        const active = index === currentIndex;
+        dot.classList.toggle('is-active',active);
+        dot.setAttribute('aria-pressed',String(active));
+      });
+    };
+    const preloadNeighbours = () => {
+      // Honour reduced-data connections; MP4s never preload as images.
+      if (navigator.connection?.saveData) return;
+      for (const index of new Set([
+        (currentIndex + 1) % photos.length,
+        (currentIndex - 1 + photos.length) % photos.length,
+      ])) {
+        if (index !== currentIndex && !isVideo(photos[index]))
+          preloadMediaImage(photos[index].url, 'detail').catch(() => {});
+      }
+    };
+    const render = index => {
+      requestedIndex = (index + photos.length) % photos.length;
+      const target = requestedIndex;
+      const request = ++navigationRequest;
+      // Keep the visible photo AND its counter unchanged while the next photo
+      // loads. Rapid next/previous taps can only commit the latest selection.
+      if (target === currentIndex) {
+        gallery.removeAttribute('aria-busy');
+        return;
+      }
+      // The MP4 is already in the frame with preload=none. Select it directly
+      // rather than sending a video URL through the image decoder/CDN preset.
+      if (isVideo(photos[target])) {
+        setActive(target);
+        gallery.removeAttribute('aria-busy');
+        updateIndicators();
+        preloadNeighbours();
+        return;
+      }
+      gallery.setAttribute('aria-busy', 'true');
+      preloadMediaImage(photos[target].url, 'detail').then(readyUrl => {
+        if (request !== navigationRequest || !gallery.isConnected) return;
+        setActive(target, readyUrl);
+        gallery.removeAttribute('aria-busy');
+        updateIndicators();
+        preloadNeighbours();
+      }).catch(() => {
+        if (request !== navigationRequest) return;
+        requestedIndex = currentIndex;
+        gallery.removeAttribute('aria-busy');
+        // Keep the last valid photograph and indicators, never show photo 01
+        // or a failed image as a substitute for the requested dress angle.
+        console.warn('Unable to load the selected wedding dress photograph');
+      });
+    };
+    previous.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      render(requestedIndex - 1);
+    });
+    next.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      render(requestedIndex + 1);
+    });
+    dots.forEach((dot,index) => dot.addEventListener('click',event => {
+      event.preventDefault();
+      event.stopPropagation();
+      render(index);
+    }));
+    gallery.addEventListener('keydown', event => {
+      if (dialog.open || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+      if (event.target.closest('input,textarea,select,video,[contenteditable="true"]')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      render(requestedIndex + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+
+    // Horizontal touch gestures continue to turn only genuine gallery photos.
+    // A vertical swipe remains normal page scrolling, never a modal tap.
+    let startPoint = null;
+    frame.addEventListener('touchstart', event => {
+      if (event.target.closest('video')) return;
+      if (event.touches.length === 1) startPoint = {
+        x:event.touches[0].clientX,y:event.touches[0].clientY,
+      };
+    }, {passive:true});
+    frame.addEventListener('touchend', event => {
+      if (!startPoint || !event.changedTouches.length) return;
+      const deltaX = event.changedTouches[0].clientX - startPoint.x;
+      const deltaY = event.changedTouches[0].clientY - startPoint.y;
+      startPoint = null;
+      if (Math.hypot(deltaX,deltaY) > 10) suppressClickUntil = performance.now() + 500;
+      if (Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25)
+        render(requestedIndex + (deltaX < 0 ? 1 : -1));
+    }, {passive:true});
+    frame.addEventListener('touchcancel', () => {startPoint=null;}, {passive:true});
+    // The initial HTML image is already being loaded by the browser. Replacing
+    // its src again on initialization would restart it or briefly repaint it.
+    gallery.dataset.activePhoto = '0';
+    gallery.dataset.activeMedia = 'photo';
+    updateIndicators();
+    preloadNeighbours();
+  }
+}

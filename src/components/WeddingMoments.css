@@ -1,0 +1,312 @@
+/* Wedding Moments: one growing gallery, with image-only square cards. */
+#content-container.layout-full .redcarpert-moments-content-box {
+  width: 100%; min-height: 400px; padding: 0;
+  background: transparent; box-shadow: none;
+}
+
+.redcarpert-moments-subtitle {
+  max-width: 800px;
+  margin: clamp(16px,2.5vw,30px) auto clamp(28px,4vw,50px) !important;
+  padding: 0 16px;
+  color: #857563;
+  text-align: center;
+  font: 400 clamp(13px,1.4vw,17px)/1.7 Montserrat,sans-serif;
+}
+
+.redcarpert-moments-media-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: clamp(10px,1.8vw,24px);
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.redcarpert-moments-media-card {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.redcarpert-moments-media-card > :is(button,a) {
+  display: block !important;
+  position: relative;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1/1;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #eee5db;
+  overflow: hidden;
+  cursor: pointer;
+  appearance: none;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.redcarpert-moments-media-card > :is(button,a) > img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  object-position: center;
+  border: 0;
+  border-radius: 0;
+  transition: transform .35s ease;
+}
+
+.redcarpert-moments-media-card > :is(button,a):hover > img {
+  transform: scale(1.025);
+}
+
+.redcarpert-moments-media-card > :is(button,a):focus-visible {
+  outline: 2px solid #9e7b56;
+  outline-offset: 3px;
+}
+
+.redcarpert-moment-play {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  display: grid;
+  place-items: center;
+  width: clamp(42px,4vw,58px);
+  height: clamp(42px,4vw,58px);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0,0,0,.50);
+  font-size: clamp(15px,1.5vw,19px);
+  line-height: 1;
+  pointer-events: none;
+  transition: background-color .2s ease;
+}
+
+.redcarpert-moments-media-card > :is(button,a):hover .redcarpert-moment-play {
+  background: rgba(0,0,0,.68);
+}
+
+/* Override the inherited editorial paragraph alignment and width, for all viewports. */
+#content-container.layout-full .redcarpert-moments-content-box .redcarpert-moments-count {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  margin: clamp(22px, 3vw, 36px) auto 0;
+  padding: 0;
+  color: #817568;
+  text-align: center !important;
+  font: 400 clamp(12px, 1.1vw, 14px)/1.6 Montserrat, sans-serif;
+}
+
+.redcarpert-moments-more {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: clamp(28px,4vw,48px) auto 0;
+}
+
+.redcarpert-moments-more[hidden] { display: none !important; }
+
+.redcarpert-moments-more button {
+  min-width: 140px;
+  min-height: 44px;
+  padding: 12px 26px;
+  border: 1px solid #af9a83;
+  border-radius: 0;
+  color: #6d5a47;
+  background: transparent;
+  font: 500 clamp(12px,1.2vw,14px)/1.4 Montserrat,sans-serif;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: background-color .2s ease,color .2s ease;
+}
+
+.redcarpert-moments-more button:hover,
+.redcarpert-moments-more button:focus-visible {
+  background: #6d5a47;
+  color: #fff;
+}
+/* Keep the pagination action as compact as the other page CTAs.
+   Scope it to the actual button and override inherited WordPress button sizing. */
+#main-container .redcarpert-moments-more > button[data-wedding-load-more] {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: max-content !important;
+  min-width: 0 !important;
+  min-height: 44px !important;
+  max-width: min(100%, 160px) !important;
+  margin: 0 auto !important;
+  padding: 10px 18px !important;
+  font: 500 13px/1.4 Montserrat, sans-serif !important;
+  letter-spacing: .035em !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+@media (max-width: 1000px) {
+  #main-container .redcarpert-moments-more > button[data-wedding-load-more] {
+    max-width: min(100%, 145px) !important;
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+  }
+}
+@media (max-width: 640px) {
+  #main-container .redcarpert-moments-more > button[data-wedding-load-more] {
+    max-width: min(100%, 130px) !important;
+    padding: 9px 14px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* The original image, uncropped; native video controls for uploaded films. */
+.redcarpert-wedding-dialog {
+  position: fixed;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  margin: auto;
+  border: 0;
+  overflow: visible;
+  background: transparent;
+  color: #584b40;
+}
+
+.redcarpert-wedding-dialog::backdrop {
+  background: rgba(25,20,16,.52);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.redcarpert-moment-dialog-inner {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  /* Media alone: no cream mat, spacing, shadow or border around photos/videos. */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.redcarpert-wedding-dialog [hidden] { display: none !important; }
+
+.redcarpert-wedding-dialog .redcarpert-wedding-preview-image {
+  display: block;
+  box-sizing: content-box;
+  width: auto !important;
+  height: auto !important;
+  max-width: min(960px,calc(100vw - 112px)) !important;
+  max-height: calc(100dvh - 32px) !important;
+  min-width: 0;
+  object-fit: contain !important;
+  object-position: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  pointer-events: none;
+}
+
+.redcarpert-wedding-dialog .redcarpert-wedding-preview-video {
+  display: block;
+  box-sizing: border-box;
+  width: min(960px,calc(100vw - 112px)) !important;
+  max-width: 100%;
+  max-height: calc(100dvh - 32px) !important;
+  object-fit: contain;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #171615;
+}
+
+.redcarpert-wedding-dialog .redcarpert-wedding-preview-close {
+  position: absolute;
+  z-index: 5;
+  /* Sit just outside the media's top-right corner, never over its pixels. */
+  top: 0;
+  right: -56px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(20,18,16,.68);
+  color: #fff;
+  cursor: pointer;
+  font: 400 22px/1 sans-serif;
+}
+
+.redcarpert-wedding-preview-close:focus-visible {
+  outline: 2px solid #a58055;
+  outline-offset: 2px;
+}
+
+/* Narrow screens have no room for a side-mounted X. Place it immediately
+   above the media's right edge, with enough vertical space for a tall photo. */
+@media (max-width: 1000px) {
+  .redcarpert-wedding-dialog .redcarpert-wedding-preview-image {
+    max-width: min(960px,calc(100vw - 32px)) !important;
+    max-height: calc(100dvh - 128px) !important;
+  }
+  .redcarpert-wedding-dialog .redcarpert-wedding-preview-video {
+    width: min(960px,calc(100vw - 32px)) !important;
+    max-height: calc(100dvh - 128px) !important;
+  }
+  .redcarpert-wedding-dialog .redcarpert-wedding-preview-close {
+    top: -52px;
+    right: 0;
+  }
+}
+
+@media(max-width:768px) {
+  .redcarpert-moments-media-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: clamp(8px,2.6vw,18px);
+  }
+}
+
+@media(max-width:640px) {
+  .redcarpert-moments-subtitle {
+    margin-top: 16px !important;
+    margin-bottom: 28px !important;
+  }
+  .redcarpert-moment-play {
+    width: 44px; height: 44px; font-size: 16px;
+  }
+  .redcarpert-moments-more button {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 44px;
+    max-width: min(100%, 200px);
+    padding: 10px 18px;
+    font-size: 12px;
+  }
+  .redcarpert-wedding-dialog .redcarpert-wedding-preview-close {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  .redcarpert-moments-media-card > :is(button,a) > img,
+  .redcarpert-moment-play,
+  .redcarpert-moments-more button {
+    transition: none;
+  }
+}
