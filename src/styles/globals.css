@@ -19,4 +19,11 @@
   --redcarpert-space-24: 24px;
   --redcarpert-space-32: 32px;
   --redcarpert-space-48: 48px;
+
+  /* Implementation 83: existing brand colors, shared interaction cues. */
+  --redcarpert-control-ink: #252525;
+  --redcarpert-control-accent: #99001f;
+  --redcarpert-control-focus: #252525;
+  --redcarpert-control-focus-dark: #fff;
+  --redcarpert-control-duration: 180ms;
 }

@@ -121,7 +121,7 @@
 }
 #footer[data-redcarpert-footer] .redcarpert-footer-items a:focus-visible,
 #footer[data-redcarpert-footer] .redcarpert-footer-items button:focus-visible {
-  outline: 1px solid currentColor;
+  outline: 2px solid currentColor;
   outline-offset: 4px;
 }
 #footer[data-redcarpert-footer] .footer-bottom {
