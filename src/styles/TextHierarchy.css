@@ -1,0 +1,75 @@
+/* Implementation 81: typography and hierarchy only.
+ * Values are sourced from existing theme/component CSS and the bridal SVG.
+ * Keep all approved geometry, centering, media, controls and layout intact.
+ * Preserve current typefaces and responsive sizes; use contrast and weight
+ * for hierarchy rather than introducing another typeface or resizing cards.
+ */
+:root {
+  --redcarpert-text-primary: #252525;
+  --redcarpert-text-secondary: #636363;
+  --redcarpert-text-accent: #99001f;
+}
+
+/* Red is reserved for meaningful words on light editorial surfaces. */
+#main-container .redcarpert-editorial .redcarpert-heading-emphasis {
+  color: var(--redcarpert-text-accent);
+  font-weight: 600;
+}
+#main-container .redcarpert-editorial .redcarpert-text-emphasis {
+  color: var(--redcarpert-text-primary);
+  font-weight: 600;
+}
+/* The full-screen hero uses white text over photography; do not add red,
+ * overlays or filters to the existing responsive media treatment. */
+body.redcarpert-home-native .fullpage-wrapper > .section :is(.redcarpert-heading-emphasis, .redcarpert-text-emphasis) {
+  color: inherit;
+  font-weight: 700;
+}
+
+#main-container .redcarpert-editorial :is(.redcarpert-editorial-hero, .redcarpert-editorial-panel, .redcarpert-editorial-story) > h2 {
+  color: var(--redcarpert-text-primary);
+  font-weight: 500;
+}
+#main-container .redcarpert-editorial :is(.redcarpert-editorial-lead, .redcarpert-contact-card-heading) {
+  color: var(--redcarpert-text-primary);
+  font-weight: 500;
+}
+#main-container .redcarpert-editorial :is(.redcarpert-editorial-eyebrow, .redcarpert-contact-card-label, .redcarpert-contact-card-helper, .redcarpert-editorial-disclosure) {
+  color: var(--redcarpert-text-secondary);
+}
+#main-container .redcarpert-moments-subtitle,
+#main-container #content-container.layout-full .redcarpert-moments-content-box .redcarpert-moments-count {
+  color: var(--redcarpert-text-secondary);
+}
+
+/* Keep the existing category/name/divider composition and square crops. */
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-collection {
+  color: var(--redcarpert-text-primary);
+}
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number {
+  color: var(--redcarpert-text-secondary);
+}
+#main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number[data-catalogue-named] {
+  font-weight: 600;
+}
+#main-container [data-detail-preview] h1.product_title.redcarpert-detail-name {
+  color: var(--redcarpert-text-primary);
+}
+#main-container [data-detail-preview] :is(.redcarpert-detail-price-label, .redcarpert-related-price-label, .redcarpert-detail-price-disclaimer, .redcarpert-related-disclaimer, .redcarpert-detail-collection) {
+  color: var(--redcarpert-text-secondary);
+}
+#main-container [data-detail-preview] p.redcarpert-detail-price-value,
+#main-container [data-detail-preview] .redcarpert-related-price-value {
+  color: var(--redcarpert-text-primary);
+  font-weight: 600;
+}
+
+/* Price typography is also updated in the PDF generator. Do not change
+ * the book's page geometry, price sizes, pagination or flip/zoom logic. */
+#main-container .redcarpert-book-copy :is(.redcarpert-book-price-label, .redcarpert-book-condition-note) {
+  color: var(--redcarpert-text-secondary);
+}
+#main-container .redcarpert-book-copy p.redcarpert-book-price {
+  color: var(--redcarpert-text-primary);
+  font-weight: 600;
+}

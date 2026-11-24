@@ -16,6 +16,7 @@ import { modernizeSiteIcons } from '../../src/lib/modern-icons.ts';
 import { createProductDetailPreview } from '../../src/lib/product-detail-preview.ts';
 import { modernTraditionPageForRoute } from '../../src/lib/modern-tradition.ts';
 import { siteMetadata } from '../../src/data/metadata.ts';
+import { refineTextHierarchy } from '../../src/lib/text-hierarchy.ts';
 
 /** Produce the existing approved page tree without touching its structure. */
 export function preparePage(route: string) {
@@ -53,6 +54,6 @@ export function preparePage(route: string) {
  if(['/about-us','/contact-us','/wedding-moments'].includes(route)) original = {...original,title:route==='/about-us'?'About Us | Redcarpert Wedding Dresses':route==='/contact-us'?'Contact Us | Redcarpert Wedding Dresses':'Wedding Moments | Redcarpert Wedding Dresses',description:route==='/about-us'?"Learn about our wedding dress collections and book a fitting on WhatsApp.":route==='/contact-us'?'Book a wedding dress fitting in Pomona, Kempton Park. The exact address is shared on WhatsApp after confirmation.':'Browse wedding photos and videos in the Wedding Moments gallery.'};
  const editorial = adaptEditorialDocument(adaptFooterBranding(correctFooterLinks(adaptLogo(adaptNavigation(addHomepageFooter(adaptHomepageBackgrounds(adaptHomepageCollectionYears(adaptSiteDocument(adaptCatalogue(adaptFooterSocials(original),catalogueProducts),contentAdaptations))),sitePages['/about-us']))))));
  // Final icon pass runs only after the canonical layout/branding guards.
- const document = modernizeSiteIcons(editorial);
+ const document = refineTextHierarchy(modernizeSiteIcons(editorial));
  return {document, product, modernPage};
 }
