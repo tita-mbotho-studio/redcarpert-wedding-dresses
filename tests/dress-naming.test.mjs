@@ -44,7 +44,7 @@ test('Digital Lookbook and PDF display the same names without dress reference la
     .map(x=>x[0]);
   assert.equal(pages.length,53);
   const images=catalogueProducts.map(p=>({
-    id:p.id,jpeg:Buffer.from([0xff,0xd8,0xff,0xd9]),width:1200,height:1800,
+    id:p.id,png:Buffer.from([137,80,78,71,13,10,26,10]),width:1200,height:1800,
   }));
   const pdf=createLuxuryLookbookHtml(catalogueProducts,images,{
     year:2026,logo:Buffer.from([0x89,0x50,0x4e,0x47]),

@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -5,6 +6,7 @@ import {
   estimateLookbookPrintDpi,
   shouldReportLookbookPrintWarning,
   downloadLookbookClientImage,
+  prepareOriginalLookbookPhoto,
 } from '../scripts/lib/lookbook-assets.ts';
 
 test('small client-supplied Ball Gown photos do not prevent PDF/site generation', () => {
@@ -113,4 +115,41 @@ test('repeated network timeout eventually fails the PDF build after three attemp
   );
   assert.equal(calls,3);
   assert.deepEqual(delays,[1000,2000]);
+});
+
+test('full-resolution PDF PNG preserves every decoded RGB pixel above the old resize cap',async()=>{
+ const width=2101,height=2501;
+ const pixels=Buffer.alloc(width*height*3);
+ for(let i=0;i<pixels.length;i++)pixels[i]=(i*31+(i>>>8))&255;
+ const original=await sharp(pixels,{raw:{width,height,channels:3}}).webp({lossless:true}).toBuffer();
+ const decoded=await sharp(original).raw().toBuffer();
+ const png=await prepareOriginalLookbookPhoto(original,'large-photo');
+ const result=await sharp(png).raw().toBuffer({resolveWithObject:true});
+ assert.equal(result.info.width,width);
+ assert.equal(result.info.height,height);
+ assert.deepEqual(result.data,decoded);
+});
+
+// Regression for Chromium closing while transferring the full base64 book.
+test('PDF export stages full-resolution photos as local files, not inline data URLs',async()=>{
+ const {mkdtemp,readFile,rm}=await import('node:fs/promises');
+ const {tmpdir}=await import('node:os');
+ const {join}=await import('node:path');
+ const {pathToFileURL}=await import('node:url');
+ const {catalogueProducts}=await import('../src/data/catalogue.ts');
+ const {writeLuxuryLookbookDocument}=await import('../src/lib/luxury-lookbook.ts');
+ const folder=await mkdtemp(join(tmpdir(),'redcarpert test '));
+ try{
+  const png=await sharp({create:{width:2101,height:2501,channels:3,background:'#ede6dd'}}).png().toBuffer();
+  const images=catalogueProducts.map(p=>({id:p.id,png,width:2101,height:2501}));
+  const htmlPath=await writeLuxuryLookbookDocument(folder,catalogueProducts,images,{year:2026,logo:png.subarray(0,8)});
+  const html=await readFile(htmlPath,'utf8');
+  const srcs=[...html.matchAll(/class="portrait"><img src="([^"]+)"/g)].map(m=>m[1]);
+  assert.equal(srcs.length,catalogueProducts.length);
+  assert(srcs.every(src=>src.startsWith('file:')&&!src.includes('base64')));
+  assert.deepEqual(new Set(srcs),new Set(images.map((_,index)=>pathToFileURL(join(folder,'photo-'+index+'.png')).href)));
+  assert.deepEqual(await readFile(join(folder,'photo-0.png')),png);
+  assert.deepEqual(await readFile(join(folder,'photo-'+(images.length-1)+'.png')),png);
+  assert(html.length<200000,'HTML should stay small regardless of image payload size');
+ }finally{await rm(folder,{recursive:true,force:true});}
 });

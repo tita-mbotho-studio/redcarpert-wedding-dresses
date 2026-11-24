@@ -15,9 +15,16 @@ const safeImage = (source,preset) => {
     'unexpected remote image host: '+original.hostname);
   assert.equal(target.hostname,original.hostname);
   assert.equal(target.pathname,original.pathname,'optimization must preserve the source asset');
+  if(preset==='hero'||preset==='preview'){
+    assert.equal(target.toString(),source,'original-only context must never transform the uploaded URL');
+    return source;
+  }
   if(original.hostname==='ik.imagekit.io'){
     assert(target.searchParams.has('tr'),'ImageKit transform missing for '+source);
-    assert.match(target.searchParams.get('tr'),/^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/);
+    const tr=target.searchParams.get('tr');
+    if(preset==='tile')assert.match(tr,/^w-(\d+),h-\1,c-maintain_ratio,fo-center,q-90,f-auto$/);
+    else if(preset==='card')assert.match(tr,/^w-\d+,q-90,f-auto$/);
+    else assert.match(tr,/^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/);
   }else{
     assert.equal(target.searchParams.get('auto'),'compress');
     assert.equal(target.searchParams.get('cs'),'tinysrgb');
@@ -100,7 +107,8 @@ test('optimized-image fallback remains central, rather than hardcoded per page',
     assert(!/w-\d+,h-\d+,c-at_max/.test(source),file+' hardcodes a duplicate CDN transform');
   }
   const pipeline=readFileSync('scripts/lib/lookbook-assets.ts','utf8');
-  assert(pipeline.includes('withoutEnlargement:true'),'PDF images must never be upscaled');
-  assert(pipeline.includes('mozjpeg:true'),'PDF JPGs must use compression');
+  assert(!/\.resize\(/.test(pipeline),'PDF images must never be resized');
+  assert(!/\.jpeg\(/.test(pipeline),'PDF images must never undergo lossy JPEG encoding');
+  assert(pipeline.includes('palette:false'),'PDF PNG encoding must not quantize source pixels');
   assert(pipeline.includes('estimateLookbookPrintDpi'),'PDF print quality must be audited');
 });

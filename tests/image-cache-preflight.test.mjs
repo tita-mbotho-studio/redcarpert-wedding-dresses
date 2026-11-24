@@ -80,3 +80,28 @@ test('deploy warm-up stops if an original and its optimized version both fail',a
   await assert.rejects(()=>warmImageCachePlan(input,{workers:1,fetchImpl}),
     /Cannot deploy: .*photo unavailable/);
 });
+
+test('cache plan includes deduplicated responsive variants and accepts only approved grid crop modes',()=>{
+ const input={
+  catalogueProducts:[{image:client}],photosForDress:()=>[{url:client}],
+  homepageBackgrounds:[],team:[],weddingMomentEvents:[{media:[{type:'photo',url:photo2}]}],
+  mediaDeliveryUrl:(src,preset)=>preset==='tile'?src+'&tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto':preset==='card'?src+'&tr=w-740,q-90,f-auto':transform(src,preset),
+  mediaResponsiveVariants:(src,preset)=>preset==='tile'?[{url:src+'&tr=w-320,h-320,c-maintain_ratio,fo-center,q-90,f-auto',width:320},{url:src+'&tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto',width:640}]:[],
+ };
+ const result=buildImageCachePlan(input);
+ assert.equal(result.requests.filter(item=>item.preset==='tile').length,2);
+ assert.equal(result.requests.filter(item=>item.preset==='card').length,1);
+ assert.equal(new Set(result.requests.map(item=>item.url)).size,result.requests.length);
+});
+
+test('cache audit distinguishes original-only homepage and modal requests from derivatives',async()=>{
+ const input={catalogueProducts:[],photosForDress:()=>[],homepageBackgrounds:[{replacement:client}],
+  team:[],weddingMomentEvents:[{media:[{type:'photo',url:photo2}]}],
+  mediaDeliveryUrl:(source,preset)=>preset==='hero'||preset==='preview'?source:transform(source,preset)};
+ const plan=buildImageCachePlan(input);
+ assert.equal(plan.requests.filter(item=>item.url===item.source).length,2);
+ const report=await warmImageCachePlan(plan,{fetchImpl:async()=>picture(),workers:1});
+ assert.equal(report.originals,2);
+ assert.equal(report.optimized,1);
+ assert.equal(report.originalFallbacks,0);
+});

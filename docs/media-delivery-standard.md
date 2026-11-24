@@ -1,6 +1,6 @@
 # Media delivery standard — Redcarpert Wedding Dresses
 
-This is the **default media pipeline** for existing media and future additions. It applies to **both ImageKit and Pexels images**; original client URLs remain unchanged in the source JSON and data attributes.
+This is the **default media pipeline** for existing media and future additions. It applies to **client ImageKit photographs**; original client URLs remain unchanged in the source JSON and data attributes.
 
 ## Central implementation
 
@@ -16,24 +16,24 @@ This is the **default media pipeline** for existing media and future additions. 
 
 | Context | ImageKit max dimensions | Quality | Delivery |
 | --- | --- | --- | --- |
-| Wedding Moments tile / video poster | 640×640 | 72 | `tile` |
-| Product catalogue card | 740×740 | 76 | `card` |
-| Dress detail carousel | 1280×1800 | 82 | `detail` |
-| Lightbox photograph | 1920×1920 | 82 | `preview` |
-| Digital lookbook photograph | 1200×1600 | 80 | `lookbook` |
-| About Us and general editorial images | 900×1200 | 76 | `team` |
-| Full-screen homepage section | 2000×2000 | 83 | `hero` |
+| Wedding Moments tile / video poster | 640×640 fallback; 320–1280 responsive squares | 90 | `tile` |
+| Product catalogue card | 740px width fallback; 320–1280 responsive widths | 90 | `card` |
+| Dress detail carousel | 1280×1800 | 92 | `detail` |
+| Lightbox photograph | Original uploaded resolution | No transformation | `preview` |
+| Digital lookbook photograph | 1200×1600 | 92 | `lookbook` |
+| About Us and general editorial images | 900×1200 | 90 | `team` |
+| Full-screen homepage section | Original uploaded resolution | No transformation | `hero` |
 
-ImageKit uses `c-at_max` (preserve the source aspect ratio; never crop the media at the CDN) plus `f-auto` (serve browser-appropriate format). Any visual crop is applied only by the **existing CSS**. Pexels uses `auto=compress`, `cs=tinysrgb` and a capped width; a smaller pre-optimized existing URL is preserved.
+Wedding Moments uses exact center-cropped square derivatives matching the existing CSS crop. Catalogue and related-card variants resize by width to preserve the existing CSS focus and original aspect ratio. Detail, team and in-book browsing use `c-at_max` and `f-auto`. Homepage and intentional enlargement use the original URL with no transformations. The browser selects one responsive grid candidate using `srcset` and `sizes`; fixed photo-gallery and hero URLs remain consistent with preloading. Quality settings are provisional until real photo/transfer-size review.
 
-Do not use these delivery presets to shrink photos embedded in the **downloadable PDF**. The PDF generator has its own `sharp` image preparation and print-DPI audit, and must preserve sufficient print resolution. Local approved logos/favicon assets are already optimized at build time, and are not modified by CDN transformations.
+Do not use these delivery presets to shrink photos embedded in the **downloadable PDF**. The PDF generator decodes original client files to full-resolution lossless PNGs without resizing, quantization or JPEG recompression. A new cache directory prevents old JPEG derivatives from being reused. Chromium verifies decoded dimensions before printing; the PDF may be substantially larger. Local approved logos/favicon assets are already optimized at build time, and are not modified by CDN transformations.
 
 ## Standard loading rules
 
 1. Approved hero: one matching high-priority preload; preconnect to its CDN; the image stays sharp with the current mobile/desktop framing. Other homepage photos retain their native scroll loading
-2. Gallery: initial visible images may be eager; off-screen media remain `loading="lazy"`, `decoding="async"`. Wedding Moments keeps **16 initial cards** and **71 inert cards**, 16 more per click
+2. Gallery: initial visible images may be eager; off-screen media remain `loading="lazy"`, `decoding="async"`. Wedding Moments keeps **16 initial cards** and **74 inert cards**, 16 more per click
 3. Video: do not preload a full MP4 or WebM until interaction. The `<video>` default is `preload="none"`, and video posters are optimized thumbnails. Preserve sound, controls, and `playsinline` when provided
-4. Lightboxes: load a screen-appropriate photo, but preserve a full-resolution original for fallback, download or zoom. Closing a video unloads its source
+4. Lightboxes: request the exact original uploaded URL only on deliberate selection. No derivative or automatic format conversion. Closing a video unloads its source
 5. **Always retain original URLs**. When an optimized image fails, a delegated error listener retries the original once. Homepage CSS background and video poster URLs also keep originals for fallback
 6. URLs with existing ImageKit `tr` parameters are never double-transformed. Unknown hosts, local paths, SVG and videos are not transformed
 7. All new media added to the manifests, dress galleries, and page content inherit this system at generation time. An exceptional image can specify `data-media-preset="preview"` (or another named preset) or `data-media-skip="true"` on the markup. Avoid manually concatenating ImageKit transformations elsewhere
@@ -52,3 +52,11 @@ Run `npm run check` (lint, typecheck, full build, unit and generated HTML tests)
 In DevTools **Network**, test repeat visits and a throttled mobile connection. Compare actual transfer size, LCP and perceptual load time before claiming a measured improvement. ImageKit's first uncached transformation may take longer than a subsequent CDN-cached request.
 
 The shared policy lives in one source module; **do not add page-specific duplicate transformation strings**. Only adapt the preset table or extend the renderer when a genuinely new display context requires it.
+
+Implementation 80: `npm run media:audit` lists default and responsive grid variants without networking. `npm run media:prepare` is optional and downloads the planned variants with bounded concurrency to warm/validate ImageKit; it may consume significant bandwidth. Do not run on every edit, and do not assume the warm-up guarantees a cache hit at every geographic edge or browser format. Use versioned source URLs on replacement. No changes to PDF processing or automatic workflow triggers.
+
+For a limited real-CDN comparison, run `npm run media:benchmark`. It requests three representative Wedding Moments photos at the previous thumbnail setting and three new widths, repeating the 640px request once. Reports actual dimensions, encoded bytes, elapsed request time and available cache headers under `.cache/redcarpert-image-preflight/benchmark.json`. It does not change uploaded files or run automatically. Review visible detail in the browser; a byte count cannot measure photographic quality.
+
+Owner-approved original-quality policy: all three homepage hero photographs, every dress photo enlargement, digital book enlargement and Wedding Moments photo enlargement use original uploaded URLs. Catalogue cards still navigate to dress details. PDF preserves full decoded photo dimensions with lossless PNG input; PDF is not a byte-identical archive of original WebP files. Existing page composition, image framing, prices, video playback and links are unchanged. Actual completed PDF size and embedded image streams must be checked before production deployment.
+
+PDF memory fix: full-resolution cached PNGs are referenced using local file URLs in a small temporary HTML document, rather than base64-embedding the entire catalogue into a Chromium setContent message. The production cache returns file paths instead of retaining encoded buffers for every dress. The renderer navigates to the local document, retains all pre-print layout and image-resolution checks, and cleans up temporary files. No dependencies or image-quality changes.

@@ -1,7 +1,6 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import { weddingMomentEvents, flattenWeddingMomentEvents } from "../src/lib/wedding-moments.ts";
-import { weddingMomentDeliveryImage } from "../src/lib/wedding-moment-image-delivery.ts";
 
 const browser = await chromium.launch({ args: ["--no-sandbox"] });
 const media=flattenWeddingMomentEvents(weddingMomentEvents);
@@ -10,7 +9,7 @@ const firstPhotoSource=media.find(item=>item.type==='photo').url;
 const totalMedia=media.length;
 try {
   for (const width of [1440, 1000, 768, 640, 390, 320]) {
-    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: width===390?3:width===768?2:1 });
     // The media request is mocked below, so observe play() instead of expecting
     // an empty MP4 response to decode. Also exercise a browser playback denial.
     await page.addInitScript(blockAudioPlayback => {
@@ -110,9 +109,19 @@ try {
       source: img.getAttribute('src'),
       original: img.dataset.weddingOriginalThumbnail,
       loading: img.loading,
+      srcset: img.getAttribute('srcset'),
+      sizes: img.getAttribute('sizes'),
     })));
     assert.equal(firstTiles.length,16);
-    assert(firstTiles.every(tile => new URL(tile.source).searchParams.get('tr') === 'w-640,h-640,c-at_max,q-72,f-auto'),
+    assert(firstTiles.every(tile=>tile.srcset?.includes('1280w')&&tile.sizes?.includes('46vw')),'responsive tile candidates and sizes must survive generation');
+    await gallery.locator('img').first().evaluate(img=>img.decode());
+    const firstSelection=await gallery.locator('img').first().evaluate(img=>({
+      selected:img.currentSrc, candidates:img.getAttribute('srcset').split(', ').map(value=>value.split(' ')[0]),
+    }));
+    assert(firstSelection.candidates.includes(firstSelection.selected),'browser must load one approved responsive derivative');
+    assert(galleryImageRequests.includes(firstSelection.selected),'selected thumbnail must have been requested');
+
+    assert(firstTiles.every(tile => new URL(tile.source).searchParams.get('tr') === 'w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto'),
        'visible tiles should request compact ImageKit versions and retain updatedAt timestamps');
      assert(firstTiles.every(tile => tile.original?.startsWith('https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses/')),
       'all client original media URLs must remain accessible as fallbacks');
@@ -175,7 +184,8 @@ try {
     assert.equal(await firstPhoto.getAttribute("data-wedding-src"),
       firstPhotoSource);
     assert.equal(await firstPhoto.getAttribute("data-wedding-preview-src"),
-      weddingMomentDeliveryImage(firstPhotoSource,'preview'));
+      firstPhotoSource);
+    assert(!galleryImageRequests.includes(firstPhotoSource),'original photo must not download before enlargement');
     await firstPhoto.click();
     const dialog = page.locator("#redcarpert-wedding-preview");
     assert(await dialog.evaluate(el => el.open));
@@ -185,6 +195,7 @@ try {
       const image = document.querySelector('[data-wedding-preview-photo]');
       return image?.complete && image.naturalWidth > 0;
     }, { timeout: 12000 });
+    assert.equal(await fullImage.getAttribute("src"),firstPhotoSource,"modal must request the exact original");
     assert.equal(await fullImage.evaluate(el => getComputedStyle(el).objectFit), "contain");
     const photoFrame = await dialog.evaluate(el => {
       const inner = el.querySelector('.redcarpert-moment-dialog-inner');

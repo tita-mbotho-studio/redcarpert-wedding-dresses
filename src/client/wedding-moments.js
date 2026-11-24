@@ -55,12 +55,9 @@ export function initializeWeddingMomentsGallery() {
     photo.hidden = type !== 'photo';
     video.hidden = type !== 'video';
     if (type === 'photo') {
-      // Display a screen-sized full photograph without downloading the massive
-      // original. Fall back once if ImageKit cannot deliver the derivative.
-      const preview = button.dataset.weddingPreviewSrc || url;
-      if (preview !== url) photo.dataset.mediaOriginal = url;
-      else photo.removeAttribute('data-media-original');
-      photo.src = preview;
+      // Fetch the exact uploaded file only when the visitor enlarges a photo.
+      photo.removeAttribute('data-media-original');
+      photo.src = url;
       photo.alt = button.querySelector('img')?.alt ||
         button.getAttribute('aria-label') || 'Wedding photograph';
     } else {

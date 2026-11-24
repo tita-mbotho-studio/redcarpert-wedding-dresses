@@ -6,7 +6,7 @@ import sharp from "sharp";
 import type { CatalogueProduct } from "../../src/data/catalogue.ts";
 import type { LuxuryLookbookImage } from "../../src/lib/luxury-lookbook.ts";
 
-const cacheDirectory=path.resolve(".cache/redcarpert-lookbook");
+const cacheDirectory=path.resolve(".cache/redcarpert-lookbook/original-resolution-png-v1");
 const targetPhotoWidthMm=170;
 const targetPhotoHeightMm=164; // Actual PDF dress-photo area in luxury-lookbook.ts
 export interface ImageAuditEntry {
@@ -89,36 +89,48 @@ export async function downloadLookbookClientImage(
   throw new Error("Cannot obtain lookbook photograph "+id);
 }
 
-async function cachedJpeg(product: CatalogueProduct): Promise<{image:LuxuryLookbookImage;audit:ImageAuditEntry}> {
+/** Preserve the full decoded raster: no resizing, quantization or lossy encoding.
+ * Auto-orient EXIF to match browser display. */
+export async function prepareOriginalLookbookPhoto(original:Buffer,id:string):Promise<Buffer> {
+  const meta=await sharp(original).metadata();
+  validateLookbookPhotoDimensions(meta,id);
+  const image=await sharp(original).rotate().png({compressionLevel:6,palette:false}).toBuffer();
+  const output=await sharp(image).metadata();
+  const swaps=meta.orientation!==undefined && meta.orientation>=5 && meta.orientation<=8;
+  if(output.width!==(swaps?meta.height:meta.width)||output.height!==(swaps?meta.width:meta.height))
+    throw new Error("Original-resolution PDF image dimensions changed: "+id);
+  return image;
+}
+
+async function cachedOriginalPhoto(product: CatalogueProduct): Promise<{image:LuxuryLookbookImage;audit:ImageAuditEntry}> {
   approvedClientPhoto(product.image);
   const name=product.id+"-"+createHash("sha256").update(product.image).digest("hex").slice(0,10);
-  const file=path.join(cacheDirectory,name+".jpeg");
+  const file=path.join(cacheDirectory,name+".png");
   const record=path.join(cacheDirectory,name+".json");
-  let image:Buffer;
   let audit:ImageAuditEntry;
   try {
-    image=await readFile(file);
     audit=JSON.parse(await readFile(record,"utf8")) as ImageAuditEntry;
+    // Inspect the existing file without retaining its encoded bytes in Node.
+    await sharp(file).metadata();
   } catch {
     const original=await downloadLookbookClientImage(product.image,product.id);
     const meta=await sharp(original).metadata();
     validateLookbookPhotoDimensions(meta,product.id);
     if(!meta.width||!meta.height)throw new Error("Unrecognizable lookbook photo "+product.id);
-    // Cache source dimensions and a JPEG suitable for the embedded PDF.
-    // Do not upscale smaller client photographs: this cannot add real detail.
-    image=await sharp(original).rotate().resize({width:2000,height:2500,fit:"inside",withoutEnlargement:true})
-      .flatten({background:"#F5F0E9"}).jpeg({quality:86,progressive:false,mozjpeg:true}).toBuffer();
+    const image=await prepareOriginalLookbookPhoto(original,product.id);
     const final=await sharp(image).metadata();
-    if(!final.width||!final.height)throw new Error("Invalid processed lookbook JPEG "+product.id);
-    // Calculate realistic print DPI from the JPEG actually placed on the A4 page.
+    if(!final.width||!final.height)throw new Error("Invalid processed lookbook PNG "+product.id);
+    // Calculate realistic print DPI from the original-resolution PNG on the A4 page.
     const effectiveDpi=estimateLookbookPrintDpi(final.width,final.height);
     audit={id:product.id,sourceUrl:product.imageCredit.sourceUrl,width:meta.width,height:meta.height,
       effectiveDpi,printReady:effectiveDpi>=300,byteSize:image.length};
     await mkdir(cacheDirectory,{recursive:true});
     await Promise.all([writeFile(file,image),writeFile(record,JSON.stringify(audit,null,2)+"\n")]);
   }
-  const output=await sharp(image).metadata();
-  if(!output.width||!output.height)throw new Error("Corrupt cached lookbook photo "+product.id);
+  const output=await sharp(file).metadata();
+  if(output.format!=="png"||!output.width||!output.height||
+     !((output.width===audit.width&&output.height===audit.height)||(output.width===audit.height&&output.height===audit.width)))
+    throw new Error("Corrupt or resized cached lookbook photo "+product.id);
   // Old cached metadata may use an outdated print area; recompute without re-downloading.
   const actualDpi=estimateLookbookPrintDpi(output.width,output.height);
   if(audit.effectiveDpi!==actualDpi || audit.printReady!==(actualDpi>=300)) {
@@ -129,7 +141,7 @@ async function cachedJpeg(product: CatalogueProduct): Promise<{image:LuxuryLookb
     console.warn("[Bridal Edit] "+product.id+": source image "+audit.width+"x"+audit.height+
       " px; estimated "+audit.effectiveDpi+" DPI in PDF. Included without upscaling; higher-resolution photo recommended for print.");
   }
-  return {image:{id:product.id,jpeg:image,width:output.width,height:output.height},audit};
+  return {image:{id:product.id,filePath:file,width:output.width,height:output.height},audit};
 }
 
 /** Print-readiness diagnostics are opt-in; every image is still audited and
@@ -152,7 +164,7 @@ export async function prepareLookbookImages(products:readonly CatalogueProduct[]
   async function worker():Promise<void> {
     while(next<products.length) {
       const i=next++;
-      const result=await cachedJpeg(products[i]);
+      const result=await cachedOriginalPhoto(products[i]);
       images[i]=result.image;
       audit[i]=result.audit;
     }

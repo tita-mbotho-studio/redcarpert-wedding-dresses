@@ -1,6 +1,9 @@
 import { PUBLIC_SITE_URL } from "../config/site.ts";
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { CatalogueProduct } from "../data/catalogue.ts";
 import { catalogueCategories } from "../data/catalogue.ts";
 import { lookbookPlacements } from "./lookbook-placements.ts";
@@ -9,12 +12,14 @@ import { generalFittingMessage } from "./whatsapp-messages.ts";
 import { buildWhatsAppUrl } from "../config/whatsapp.ts";
 
 /** A4 editorial PDF: five category dividers and one spread for each of 49 distinct dress records. */
-export interface LuxuryLookbookImage {
+export type LuxuryLookbookImage = {
   readonly id: string;
-  readonly jpeg: Buffer;
   readonly width: number;
   readonly height: number;
-}
+} & (
+  | { readonly filePath: string; readonly png?: never }
+  | { readonly png: Buffer; readonly filePath?: never }
+);
 export interface LuxuryLookbookOptions {
   readonly year: number;
   readonly logo: Buffer;
@@ -121,8 +126,12 @@ export function createLuxuryLookbookHtml(products: readonly CatalogueProduct[], 
   if (sources.size !== products.length) throw new Error("The Bridal Edit needs one photograph per dress");
   const photograph = (id: string): string => {
     const item = sources.get(id);
-    if (!item || !item.jpeg.subarray(0,2).equals(Buffer.from([0xff,0xd8])) || item.width<=0||item.height<=0) throw new Error("Invalid PDF photo "+id);
-    return imageData(item.jpeg,"image/jpeg");
+    if (!item || item.width<=0 || item.height<=0) throw new Error("Invalid PDF photo "+id);
+    // Cache files have already been decoded and validated by prepareLookbookImages.
+    // pathToFileURL handles spaces, non-ASCII filenames and Windows drive letters.
+    if (item.filePath) return esc(pathToFileURL(item.filePath).href);
+    if (!item.png?.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw new Error("Invalid PDF photo "+id);
+    return imageData(item.png,"image/png");
   };
   const placements=lookbookPlacements(products);
   const totalPages=placements.length+catalogueCategories.length+7;
@@ -211,15 +220,49 @@ export function createLuxuryLookbookHtml(products: readonly CatalogueProduct[], 
     pages.join("\n").replaceAll("__PAGE_TOTAL__",two(totalPages))+'</body></html>';
 }
 
+/** Generate a small file-backed HTML document, never a multi-megabyte CDP
+ * setContent payload. The production source files remain in the versioned cache;
+ * buffer-based callers are staged one at a time in the temporary directory. */
+export async function writeLuxuryLookbookDocument(directory:string, products:readonly CatalogueProduct[], images:readonly LuxuryLookbookImage[], options:LuxuryLookbookOptions):Promise<string>{
+  const local:LuxuryLookbookImage[]=[];
+  for(const [index,image] of images.entries()){
+    if(image.filePath){
+      local.push(image);
+      continue;
+    }
+    if(!image.png?.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw new Error("Invalid PDF photo "+image.id);
+    const filePath=join(directory,"photo-"+index+".png");
+    await writeFile(filePath,image.png);
+    local.push({id:image.id,width:image.width,height:image.height,filePath});
+  }
+  const htmlPath=join(directory,"lookbook.html");
+  await writeFile(htmlPath,createLuxuryLookbookHtml(products,local,options),"utf8");
+  return htmlPath;
+}
+
 export async function createLuxuryLookbookPdf(products: readonly CatalogueProduct[], images: readonly LuxuryLookbookImage[], options: LuxuryLookbookOptions): Promise<Buffer> {
-  const html=createLuxuryLookbookHtml(products,images,options);
-  const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+  const directory=await mkdtemp(join(tmpdir(),"redcarpert-lookbook-"));
   try {
+    const htmlPath=await writeLuxuryLookbookDocument(directory,products,images,options);
+    const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+    try {
     const tab=await browser.newPage({viewport:{width:1240,height:1754},deviceScaleFactor:1});
-    await tab.setContent(html,{waitUntil:"load",timeout:60000});
+    tab.setDefaultTimeout(180000);
+    await tab.goto(pathToFileURL(htmlPath).href,{waitUntil:"load",timeout:120000});
     await tab.evaluate(async()=>{await document.fonts.ready;});
     const missing=await tab.evaluate(()=>Array.from(document.images).filter(image=>!image.complete||!image.naturalWidth).map(image=>image.alt));
     if(missing.length)throw new Error("Lookbook images failed to render: "+missing.join(", "));
+    const expectedDimensions=Object.fromEntries(lookbookPlacements(products).map(placement=>{
+      const image=images.find(item=>item.id===placement.product.id);
+      if(!image)throw new Error("Missing original-resolution photo "+placement.product.id);
+      return ["look-"+placement.id,{width:image.width,height:image.height}];
+    }));
+    const wrongDimensions=await tab.evaluate(expected=>[...document.querySelectorAll<HTMLImageElement>(".page.dress .portrait img")].flatMap(img=>{
+      const id=img.closest("section.page")?.id??"";
+      const size=expected[id];
+      return !size||img.naturalWidth!==size.width||img.naturalHeight!==size.height?[id]:[];
+    }),expectedDimensions);
+    if(wrongDimensions.length)throw new Error("PDF photo resolution changed: "+wrongDimensions.join(", "));
     // Check actual Chromium layout before printing: the two prices, disclaimer
     // and dress link must remain within the fixed A4 editorial page for every
     // dress pages. Do not silently hide clipped pricing behind overflow:hidden.
@@ -260,8 +303,11 @@ export async function createLuxuryLookbookPdf(products: readonly CatalogueProduc
       format:"A4",printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false,
       outline:true,tagged:true
     });
-    return Buffer.from(pdf);
+    return pdf;
+    } finally {
+      await browser.close();
+    }
   } finally {
-    await browser.close();
+    await rm(directory,{recursive:true,force:true,maxRetries:3,retryDelay:100});
   }
 }
