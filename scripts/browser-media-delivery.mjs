@@ -7,7 +7,7 @@ import { weddingMomentEvents, flattenWeddingMomentEvents } from '../src/lib/wedd
 /** Exercise the centralized fallback with deliberately failed CDN derivatives.
  * Run after npm run preview, against http://localhost:4173. */
 const browser=await chromium.launch({args:['--no-sandbox']});
-const root='http://localhost:4173/redcarpert-wedding-dresses-main';
+const root='http://localhost:4173/redcarpert-wedding-dresses';
 // Match actual client image formats. Serving SVG bytes under .webp/.jpg URLs can
 // produce browser-dependent decode failures rather than testing our fallback.
 const fixture={create:{width:800,height:1000,channels:3,background:'#d0c0b0'}};
