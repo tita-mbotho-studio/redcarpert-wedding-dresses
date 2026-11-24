@@ -5,7 +5,7 @@
   "description": "Official Redcarpert Wedding Dresses bridal catalogue",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tita-mbotho-studio/redcarpert-wedding-dresses.git"
+    "url": "git+https://github.com/tita-mbotho-studio/redcarpert-wedding-dresses-main.git"
   },
   "engines": {
     "node": ">=22.12.0"
