@@ -47,8 +47,8 @@
   outline-offset: 3px;
 }
 
-/* Contact Us: both placements reuse the same phone-number button with the
- * original WhatsApp green/white palette. The obsolete chat link is removed. */
+/* Contact Our Team retains the WhatsApp green/white palette.
+ * The map telephone action is neutral and is not targeted by these rules. */
 #main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send] {
   background: var(--redcarpert-whatsapp-green) !important;
   border-color: var(--redcarpert-whatsapp-border) !important;
