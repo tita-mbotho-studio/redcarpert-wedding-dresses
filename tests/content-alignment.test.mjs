@@ -31,3 +31,13 @@ test('PDF text, folios, bounded editorial sections and fitting link are centered
  assert.match(pdf,/\.button\{display:inline-block;align-self:center;text-align:center;/);
  assert.match(pdf,/Lookbook PDF text alignment:/);
 });
+
+test('all listing introductions occupy full width instead of inheriting floats or table cells',()=>{
+ const css=read('src/components/CatalogueListing.css');
+ assert.match(css,/h1\.page-title,\s*#main-container #content-container \.content-box\.pexeto-woo-columns-4 > \.woocommerce-result-count\s*\{[^}]*display: block !important;[^}]*float: none !important;[^}]*width: 100% !important;[^}]*text-align: center !important;/s);
+ assert.match(css,/\.woocommerce-ordering\[aria-hidden="true"\]\s*\{\s*display: none !important;/);
+ const browser=read('scripts/browser-content-alignment.mjs');
+ assert.match(browser,/categoryRoutes\.length,5/);
+ assert.match(browser,/for\(const route of allRoutes\)/);
+ assert.match(browser,/field\.lineErrors\.every\(error=>error<=3\)/);
+});

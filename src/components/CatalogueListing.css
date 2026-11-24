@@ -167,3 +167,37 @@
   #main-container ul.products[data-catalogue-preview] li.product { transition: none; }
 }
 
+
+/* Implementation 77: listing introductions must occupy the full grid width.
+ * WooCommerce floats the description left; the theme also makes .page-title
+ * a table cell. Text-align alone cannot center either shrink-wrapped box.
+ * Apply to the main catalogue and every category, not individual slugs. */
+#main-container #content-container .content-box.pexeto-woo-columns-4 > h1.page-title,
+#main-container #content-container .content-box.pexeto-woo-columns-4 > .woocommerce-result-count {
+  box-sizing: border-box;
+  display: block !important;
+  float: none !important;
+  clear: both;
+  width: 100% !important;
+  max-width: 100%;
+  margin-inline: auto !important;
+  padding-inline: 0 !important;
+  text-align: center !important;
+  overflow-wrap: break-word;
+}
+
+/* The existing inaccessible ordering placeholder must not take up a second
+ * column or push the centered introduction away from the product grid.
+ * The real, interactive main-catalogue filter is not affected. */
+#main-container #content-container .content-box.pexeto-woo-columns-4 > .woocommerce-ordering[aria-hidden="true"] {
+  display: none !important;
+}
+
+/* The heading above the catalogue shares the page's centered title area. */
+#main-container .page-title-wrapper .page-title > .content-boxed {
+  text-align: center !important;
+}
+#main-container .page-title-wrapper .page-title > .content-boxed > h1 {
+  text-align: center !important;
+  margin-inline: auto;
+}
