@@ -74,7 +74,8 @@ try {
           hero: box(hero),
           root: box(wrap),
           panels: panels.map(box),
-          h2Alignments: [...wrap.querySelectorAll('.redcarpert-editorial-hero h2, .redcarpert-editorial-panel h2')].map(h => getComputedStyle(h).textAlign),
+          h2Alignments: [...wrap.querySelectorAll('.redcarpert-editorial-hero h2, .redcarpert-editorial-panel h2, .redcarpert-editorial-story h2')].map(h => getComputedStyle(h).textAlign),
+          storyTextAlignments: [...wrap.querySelectorAll('.redcarpert-editorial-story p')].map(p => getComputedStyle(p).textAlign),
           panelCount: panels.length,
           layoutClass: document.querySelector('#content-container')?.className,
           sidebar: Boolean(document.querySelector('#content-container #sidebar')),
@@ -105,17 +106,27 @@ try {
             const card=wrap.querySelector('.redcarpert-contact-card');
             if(!card)return null;
             const number=card.querySelector('[data-contact-whatsapp-number]');
-            const chat=card.querySelector('[data-contact-whatsapp-action]');
             return {
               ...box(card),
               number:number?box(number):null,
-              chat:chat?box(chat):null,
               numberHref:number?.getAttribute('href'),
-              chatHref:chat?.getAttribute('href'),
               numberText:number?.textContent?.trim(),
-              chatText:chat?.textContent?.trim(),
               numberWrap:number?getComputedStyle(number).overflowWrap:null,
-              chatWrap:chat?getComputedStyle(chat).overflowWrap:null,
+              numberTextAlign:number?getComputedStyle(number).textAlign:null,
+              duplicateCount:card.querySelectorAll('a[href^="https://wa.me/"]').length,
+            };
+          })(),
+          mapContact: (() => {
+            const group=wrap.querySelector('.redcarpert-map-whatsapp');
+            const number=group?.querySelector('[data-contact-whatsapp-number]');
+            if(!group||!number)return null;
+            return {
+              ...box(number),
+              group:box(group),
+              href:number.getAttribute('href'),
+              text:number.textContent.trim(),
+              textAlign:getComputedStyle(number).textAlign,
+              followsDescription:group.previousElementSibling?.textContent.trim()==="We're in Pomona, Kempton Park. This map shows the general area.",
             };
           })(),
           iconCtas: [...wrap.querySelectorAll('[data-redcarpert-icon-cta]')].map(group => {
@@ -200,6 +211,8 @@ try {
         assert(action.width<=210.5,width+'px '+route+' action must not become oversized');
       }
       if (route === '/about-us/') {
+        assert(metrics.storyTextAlignments.length>=6 && metrics.storyTextAlignments.every(value=>value==='center'),
+          width+'px the entire client-approved Our Story must be centred');
         assert.equal(metrics.actionButtons.length,5,'all five collection links must remain');
         const expectedColumns=width<=640?2:width<=1000?3:5;
         const rows=[];
@@ -257,26 +270,34 @@ try {
         }
       } else if (route === '/contact-us/') {
         assert.equal(metrics.actionButtons.length,1,'Contact Us keeps its browse-dresses action');
-        const card=metrics.contactCard;
-        assert(card && card.number && card.chat,width+'px Contact Us must show the new contact card');
+        const card=metrics.contactCard, mapButton=metrics.mapContact;
+        assert(card?.number && mapButton,width+'px Contact Us must show one team number and one matching map button');
+        assert.equal(card.duplicateCount,1,'the duplicate team chat button must be absent');
         assert(card.width>0 && card.width<=Math.min(550,metrics.hero.width)+1,
           width+'px contact card must adapt to its container');
         assert(card.x>=-1&&card.right<=width+1,width+'px contact card must not overflow the viewport');
         assert(Math.abs(card.center-metrics.hero.center)<3,
           width+'px contact card must remain centered');
-        for(const link of [card.number,card.chat]){
-          assert(link.width>0&&link.width<=card.width+1,
-            width+'px contact link must fit within the card');
-          assert(link.x>=card.x-1&&link.right<=card.right+1,
-            width+'px contact link must not overflow the card');
-          assert(link.height>=44,width+'px contact link must remain tap-friendly');
+        for(const [link,container] of [[card.number,card],[mapButton,mapButton.group]]){
+          assert(link.width>0&&link.width<=container.width+1,
+            width+'px contact number button must fit within its container');
+          assert(link.x>=container.x-1&&link.right<=container.right+1,
+            width+'px contact number button must not overflow its container');
+          assert(link.height>=44,width+'px contact number button must remain tap-friendly');
+          assert(link.width<=width+1,width+'px contact number button must fit the viewport');
         }
         assert.equal(card.numberWrap,'anywhere');
-        assert.equal(card.chatWrap,'anywhere');
+        assert.equal(card.numberTextAlign,'center');
+        assert.equal(mapButton.textAlign,'center');
         assert.equal(card.numberText,'+27 68 045 8811');
-        assert.equal(card.chatText,'Chat on WhatsApp');
+        assert.equal(mapButton.text,card.numberText);
         assert(card.numberHref?.startsWith('https://wa.me/27680458811?text='));
-        assert.equal(card.chatHref,card.numberHref);
+        assert.equal(mapButton.href,card.numberHref);
+        assert(mapButton.followsDescription,'map WhatsApp button must be directly under the Pomona text');
+        assert(Math.abs(mapButton.center-mapButton.group.center)<=2,
+          width+'px map WhatsApp button must be centered');
+        if(width>=390)assert(card.number.width<card.width-10,
+          width+'px contact button must fit its text instead of spanning the whole card');
         assert(Math.abs(metrics.actionButtons[0].center-metrics.actionGroup.center)<=2,
           width+'px Contact Us action must stay centered');
         assert.equal(metrics.panelCount, 3);
