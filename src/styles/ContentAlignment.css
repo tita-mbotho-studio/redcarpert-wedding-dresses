@@ -1,0 +1,49 @@
+/* Implementation 77: shared public-facing typography alignment.
+ * Loaded after the captured theme and authored components. Do not change
+ * layout display, positioning, dimensions, media geometry or icon controls. */
+#main-container,
+#main-container :is(#content-container, .page-wrapper, .section-content, .section-title,
+  .section-light, .redcarpert-editorial, .redcarpert-editorial-panel,
+  .redcarpert-lookbook-copy, .redcarpert-book-copy, .redcarpert-book-price-item,
+  .redcarpert-icon-cta, .redcarpert-detail-actions, .redcarpert-catalogue-filter),
+#main-container :is(h1, h2, h3, h4, h5, h6, p, blockquote, figcaption,
+  caption, th, td, label, li, dt, dd, a, button, input, select, textarea,
+  [role="button"], [role="status"], .button, .price, .woocommerce-breadcrumb,
+  .woocommerce-result-count, .redcarpert-moment-count, .redcarpert-map-call) {
+  text-align: center !important;
+}
+
+/* Keep the header geometry and submenu toggle unchanged. */
+#header :is(.nav-menu, .mob-nav-menu),
+#header :is(.nav-menu, .mob-nav-menu) :is(ul, li, a, button) {
+  text-align: center !important;
+}
+@media (max-width: 1000px) {
+  #header .mob-nav-menu ul ul li {
+    padding-inline: 0;
+  }
+  /* Reserve equal space on both sides of the centered category label,
+   * including the existing independent right-hand submenu toggle. */
+  #header .mob-nav-menu #menu-item-15821 > a {
+    padding-inline: 50px;
+  }
+}
+
+/* Text plus glyphs in existing flex/grid controls remain a centered group.
+ * Icon-only positioning, dimensions and colors continue to use component CSS. */
+#main-container :is(.redcarpert-editorial-actions, .redcarpert-lookbook-controls,
+  .redcarpert-book-controls, .redcarpert-detail-actions, .redcarpert-icon-cta,
+  .redcarpert-map-call, .redcarpert-catalogue-filter) {
+  justify-content: center;
+}
+#main-container :is(a.button, button.button, .redcarpert-contact-number,
+  .redcarpert-contact-call, .redcarpert-icon-cta-button,
+  .redcarpert-detail-fitting-button) {
+  justify-content: center;
+  align-items: center;
+}
+
+/* Center the generated 404 page without affecting normal page layout. */
+body.redcarpert-not-found main {
+  text-align: center;
+}

@@ -31,7 +31,7 @@ const style = [
   "@page{size:A4;margin:0}",
   "*{box-sizing:border-box}",
   "html,body{margin:0;padding:0;background:#FDFBF8;color:#4C4035;-webkit-print-color-adjust:exact;print-color-adjust:exact}",
-  "body{font-family:Montserrat,Arial,sans-serif}",
+  "body{font-family:Montserrat,Arial,sans-serif;text-align:center}",
   "h1,h2,h3,p{margin:0;padding:0}",
   "h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400}",
   "a{color:inherit;text-decoration:none}",
@@ -40,8 +40,7 @@ const style = [
   ".content{position:absolute;inset:18mm 18mm 18mm 22mm;display:flex;flex-direction:column}",
   ".page:nth-child(even) .content{left:18mm;right:22mm}",
   ".kicker{font:500 9pt/1.5 Montserrat,Arial,sans-serif;letter-spacing:.20em;text-transform:uppercase;color:#947B5C}",
-  ".folio{position:absolute;left:22mm;bottom:9mm;font:500 8pt/1 Montserrat,Arial,sans-serif;letter-spacing:.12em;color:#998A7C}",
-  ".page:nth-child(even) .folio{left:18mm}",
+  ".folio{position:absolute;left:0;right:0;text-align:center;bottom:9mm;font:500 8pt/1 Montserrat,Arial,sans-serif;letter-spacing:.12em;color:#998A7C}",
   ".cover{background:linear-gradient(155deg,#FDFBF8,#F5F0E9)}",
   ".cover .content{align-items:center;justify-content:center;text-align:center;gap:12mm}",
   ".logo{display:block;width:67mm;height:22mm;object-fit:contain}",
@@ -52,10 +51,10 @@ const style = [
 
   ".tiny{font:400 7.8pt/1.5 Montserrat,Arial,sans-serif;color:#8B7C6D}",
 
-  ".front .content{justify-content:center}",
+  ".front .content{justify-content:center;align-items:center}",
   ".front h1{font-size:76pt;line-height:.93;margin:16mm 0 10mm;letter-spacing:-.03em}",
   ".front .lead{font-size:11.5pt;line-height:2.1;max-width:128mm;color:#665A4E;margin-top:11mm}",
-  ".welcome .content{justify-content:center}",
+  ".welcome .content{justify-content:center;align-items:center}",
   ".welcome h2{font-size:48pt;line-height:1.06;max-width:142mm;margin:11mm 0}",
   ".welcome p{font-size:11pt;line-height:2;max-width:138mm;margin-bottom:7mm;color:#695D51}",
   ".contents .content{padding-top:12mm}",
@@ -65,7 +64,7 @@ const style = [
   ".entry a{flex:1;font:400 23pt/1.1 'Cormorant Garamond',Georgia,serif}",
   ".entry .page-number{font-size:10pt;color:#7E7164}",
   ".divider{background:#F5F0E9}",
-  ".divider .content{justify-content:center}",
+  ".divider .content{justify-content:center;align-items:center}",
   ".divider .number{font:400 91pt/1 'Cormorant Garamond',Georgia,serif;color:#D8C9B9}",
   ".divider h2{font-size:61pt;line-height:1.05;max-width:144mm;margin:5mm 0 13mm}",
   ".divider .intro{max-width:108mm;color:#76685B;font-size:10pt;line-height:1.9;margin-top:12mm}",
@@ -80,16 +79,16 @@ const style = [
   ".dress-bottom h3{font:400 28pt/1.12 Georgia,serif;letter-spacing:-.015em}",
   ".price-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7mm;align-items:start;width:100%;max-width:144mm;margin:1mm auto}",
   ".price-item{display:flex;flex-direction:column;align-items:center;gap:1.5mm;min-width:0}",
-  ".price-item+.price-item{border-left:.25mm solid #E9DED2;padding-left:6mm}",
+  ".price-item+.price-item{border-left:.25mm solid #E9DED2;padding-inline:3mm}",
   ".amount{font:500 14pt/1.3 Montserrat,Arial,sans-serif;color:#65513D;white-space:nowrap}",
   ".amount-label{font:500 7.5pt/1.3 Montserrat,Arial,sans-serif;color:#85766A;text-transform:uppercase;letter-spacing:.035em}",
   ".price-condition{font:400 7pt/1.4 Montserrat,Arial,sans-serif;color:#8C8074;text-align:center;max-width:147mm}",
   ".dress-bottom .detail-link{font:500 9pt/1.4 Montserrat,Arial,sans-serif;color:#8D6845;text-decoration:underline;text-underline-offset:3px}",
   ".dress .disclosure{font:400 7.2pt/1.5 Montserrat,Arial,sans-serif;color:#8C8074;text-align:center;margin:0 auto;max-width:150mm}",
-  ".contact .content{justify-content:center}",
+  ".contact .content{justify-content:center;align-items:center}",
   ".contact h2{font-size:58pt;line-height:1.07;margin:7mm 0 13mm}",
   ".contact p{font-size:11pt;line-height:1.95;max-width:139mm;margin-bottom:7mm}",
-  ".button{display:inline-block;align-self:flex-start;background:#4C4035;color:white;padding:5mm 9mm;font-size:9pt;letter-spacing:.05em;margin:7mm 0}",
+  ".button{display:inline-block;align-self:center;text-align:center;background:#4C4035;color:white;padding:5mm 9mm;font-size:9pt;letter-spacing:.05em;margin:7mm 0}",
   ".contact .web{font-size:9pt;color:#947B5C;margin-top:9mm}",
   ".credits .content{justify-content:center}",
   ".credits h2{font-size:43pt;margin:5mm 0 11mm}",
@@ -242,6 +241,12 @@ export async function createLuxuryLookbookPdf(products: readonly CatalogueProduc
       });
     });
     if(clipped.length)throw new Error("Lookbook PDF content clipped: "+clipped.join(", "));
+    // Verify centered wording on every generated editorial page before PDF export.
+    const misaligned=await tab.evaluate(()=>[...document.querySelectorAll<HTMLElement>(
+      "section.page :is(h1,h2,h3,p,a,.kicker,.folio,.num,.page-number,.credit,.amount,.amount-label)"
+    )].filter(el=>el.textContent?.trim() && getComputedStyle(el).textAlign!=="center")
+      .map(el=>(el.closest("section.page")?.id??"unknown")+": "+el.className));
+    if(misaligned.length)throw new Error("Lookbook PDF text alignment: "+misaligned.join(", "));
     const count=await tab.locator("section.page").count();
     if(count!==lookbookPlacements(products).length+catalogueCategories.length+7)throw new Error("Wrong rendered book page count "+count);
     if(process.env.REDCARPERT_BOOK_PREVIEW==="1") {

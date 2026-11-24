@@ -26,7 +26,7 @@ validateDressGalleryMappings();
 const routes = ['/',...publicStaticRoutes(sitePages,catalogueProducts.map(p=>p.previewRoute))];
 await rm(root, {recursive:true,force:true});
 await mkdir(root,{recursive:true});
-const cssFiles = ['src/styles/globals.css',...['FooterBranding','CatalogueListing','ProductDetailPreview','EditorialPages','HomepageExperience'].map(n=>'src/components/'+n+'.css'),'src/components/CatalogueFilter.css','src/components/WeddingMoments.css','src/components/ModernIcons.css','src/components/WhatsAppBrand.css','src/components/LookbookZoom.css'];
+const cssFiles = ['src/styles/globals.css',...['FooterBranding','CatalogueListing','ProductDetailPreview','EditorialPages','HomepageExperience'].map(n=>'src/components/'+n+'.css'),'src/components/CatalogueFilter.css','src/components/WeddingMoments.css','src/components/ModernIcons.css','src/components/WhatsAppBrand.css','src/components/LookbookZoom.css','src/styles/ContentAlignment.css'];
 // Native homepage scrolling should retain the browser's vertical scrollbar.
 // No synthetic scrollbar hiding or fullpage/footer handoff is necessary.
 const extraCss = (await Promise.all(cssFiles.map(f=>readFile(f,'utf8')))).join('\n');
@@ -90,6 +90,6 @@ await Promise.all([
  writeFile(root+'/static/digital-lookbook/'+premiumPdfName,pdf),
  writeFile(root+'/lookbook-image-audit.json',JSON.stringify({editionYear,photoCount:bookImageAudit.length,photos:bookImageAudit},null,2)),
 ]);
-await writeFile(root+'/404.html',`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Redcarpert</title><link rel="icon" type="image/png" sizes="32x32" href="${base}redcarpert/brand/redcarpert-bridal-favicon-v2-32.png"><link rel="apple-touch-icon" sizes="180x180" href="${base}redcarpert/brand/redcarpert-bridal-touch-v2-180.png"></head><body><main><h1>Page not found</h1><p>This page is unavailable.</p><a href="${base}">Return to Redcarpert Wedding Dresses</a></main></body></html>`);
+await writeFile(root+'/404.html',`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found | Redcarpert</title><link rel="icon" type="image/png" sizes="32x32" href="${base}redcarpert/brand/redcarpert-bridal-favicon-v2-32.png"><link rel="apple-touch-icon" sizes="180x180" href="${base}redcarpert/brand/redcarpert-bridal-touch-v2-180.png"></head><body class="redcarpert-not-found"><main style="text-align:center"><h1>Page not found</h1><p>This page is unavailable.</p><a href="${base}">Return to Redcarpert Wedding Dresses</a></main></body></html>`);
 await writeFile(root+'/routes.json',JSON.stringify(routes));
 console.log(`Generated ${routes.length} approved pages and ${assets.size} reachable assets.`);
