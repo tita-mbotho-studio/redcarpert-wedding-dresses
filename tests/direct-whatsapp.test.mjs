@@ -34,7 +34,7 @@ test('every approved page converts all on-site enquiry previews to native WhatsA
       assert.equal(calls[0].attrs.target,undefined);
       assert.equal(calls[0].attrs['data-whatsapp-send'],undefined);
       assert.deepEqual(calls[0].children,[
-        {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us',
+        {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us: +27 68 045 8811',
       ]);
     }
     for(const control of direct){
