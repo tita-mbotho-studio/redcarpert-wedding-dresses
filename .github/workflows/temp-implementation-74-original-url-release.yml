@@ -1,0 +1,65 @@
+name: TEMP Implementation 74 original URL independent Pages release
+# One-time user-approved cutover deployment. Delete after confirmed publication.
+# Standard pages.yml and verify.yml remain manual-only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/temp-implementation-74-original-url-release.yml
+permissions:
+  contents: read
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.event.head_commit.message == 'release: publish independent Redcarpert at original Pages URL'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:dist
+      - name: Verify production interactions at restored original Pages URL
+        run: |
+          npm run preview -- --port 4173 > /tmp/original-pages-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          curl --fail --retry 10 --retry-delay 1 --retry-connrefused http://localhost:4173/redcarpert-wedding-dresses/ > /dev/null
+          node scripts/browser-media-delivery.mjs
+          node scripts/browser-catalogue-cards.mjs
+          node scripts/browser-whatsapp.mjs
+          node scripts/browser-dress-gallery.mjs
+          node scripts/browser-lookbook.mjs
+          node scripts/browser-interactions.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy verified independent Pages artifact at original URL
+        id: deployment
+        uses: actions/deploy-pages@v4
