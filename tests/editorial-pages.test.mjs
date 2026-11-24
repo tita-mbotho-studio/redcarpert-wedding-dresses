@@ -77,6 +77,8 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
       const story=content.children[0];
       assert.equal(story.attrs.class,'redcarpert-editorial-story','client Our Story must appear first');
       assert.equal(story.attrs['aria-labelledby'],'redcarpert-story-intro-title');
+      assert(!story.children.some(child=>child.attrs.class==='redcarpert-editorial-eyebrow'),
+        'About Us must not render the removed OUR STORY label');
       const storyHeading=story.children.find(child=>child.tag==='h2');
       assert.deepEqual(storyHeading.children,['Welcome to Redcarpert Wedding Dresses']);
       const approvedStory=[
@@ -87,7 +89,7 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
         'Your wedding day is your moment to shine, and we would be honoured to be part of your journey.',
         'Redcarpert Wedding Dresses – Where Every Bride Finds Her Moment to Shine.',
       ];
-      assert.deepEqual(story.children.filter(child=>child.tag==='p' && child.attrs.class!=='redcarpert-editorial-eyebrow').map(child=>child.children[0]),approvedStory,
+      assert.deepEqual(story.children.filter(child=>child.tag==='p').map(child=>child.children[0]),approvedStory,
         'client-approved Our Story wording must be reproduced exactly');
       const originalHero=content.children[1];
       assert.equal(originalHero.attrs.class,'redcarpert-editorial-hero');
@@ -187,7 +189,7 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
 test('client story typography and Contact Us buttons are centered, fluid and content-sized',()=>{
   const css=readFileSync('src/components/EditorialPages.css','utf8');
   assert.match(css,/\.redcarpert-editorial-story h2\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
-  assert.match(css,/\.redcarpert-editorial-story p:not\(\.redcarpert-editorial-eyebrow\)\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
+  assert.match(css,/\.redcarpert-editorial-story p\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
   assert.match(css,/\.redcarpert-contact-number\s*\{[^}]*width:\s*fit-content;[^}]*max-width:\s*100%;/s);
   assert.match(css,/\.redcarpert-map-whatsapp\s*\{[^}]*justify-content:\s*center;/s);
   assert(!css.includes('.redcarpert-contact-chat'),'obsolete duplicate-button styling must be removed');
