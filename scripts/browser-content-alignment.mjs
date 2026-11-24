@@ -21,6 +21,49 @@ try{
     return [...document.querySelectorAll(selectors)].filter(el=>visible(el)&&el.textContent.trim()&&getComputedStyle(el).textAlign!=='center').map(el=>({text:el.textContent.trim().slice(0,100),alignment:getComputedStyle(el).textAlign}));
    });
    assert.deepEqual(issues,[],width+'px '+route);
+   if(route.startsWith('/product/preview/')){
+    const metrics=await page.locator('[data-detail-preview]').evaluate(root=>{
+     const box=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,cx:(r.left+r.right)/2,cy:(r.top+r.bottom)/2};};
+     const gallery=root.querySelector(':scope > [data-detail-gallery]');
+     const frame=gallery.querySelector('[data-dress-frame]');
+     const card=root.querySelector('.redcarpert-detail-card');
+     const fitting=card.querySelector('.redcarpert-detail-fitting-button');
+     const photo=frame.querySelector('[data-gallery-active-image]');
+     const related=root.querySelector(':scope > .redcarpert-related-dresses');
+     const prices=[...card.querySelectorAll('[data-sale-price],[data-rental-price]')];
+     return {root:box(root),gallery:box(gallery),frame:box(frame),card:box(card),fitting:box(fitting),related:related?box(related):null,
+      layout:getComputedStyle(root).display,objectFit:getComputedStyle(photo).objectFit,
+      photoWidth:box(photo).width,photoHeight:box(photo).height,
+      fittingHref:fitting.getAttribute('href'),
+      priceOverflow:prices.some(el=>el.scrollWidth>el.clientWidth+1),
+      horizontalOverflow:document.documentElement.scrollWidth>innerWidth+1,
+      hasSizes:/AVAILABLE SIZES/i.test(card.textContent)};
+    });
+    const label=width+'px '+route;
+    assert.equal(metrics.layout,'grid',label+' must use the shared editorial grid');
+    assert(metrics.root.width<=1041,label+' detail container exceeds 1040px');
+    assert(metrics.card.width<=401&&metrics.frame.width<=401,label+' oversized detail columns');
+    assert(metrics.frame.height<=601,label+' oversized dress photograph');
+    assert(metrics.frame.height>100&&metrics.photoWidth>100,label+' collapsed photograph');
+    assert.equal(metrics.objectFit,'contain',label+' must retain full dress silhouette');
+    assert(metrics.fitting.width>=43.5&&metrics.fitting.height>=43.5,label+' fitting tap target too small');
+    assert(Math.abs(metrics.fitting.cx-metrics.card.cx)<=2,label+' fitting icon must be centered');
+    assert(metrics.fittingHref?.startsWith('https://wa.me/'),label+' missing direct WhatsApp enquiry');
+    assert(!metrics.priceOverflow&&!metrics.horizontalOverflow,label+' prices or page overflow');
+    assert(!metrics.hasSizes,label+' do not display sizes until supplied');
+    if(width>=768){
+     assert(metrics.gallery.right+20<=metrics.card.left,label+' desktop columns overlap');
+     assert(Math.abs(metrics.gallery.cy-metrics.card.cy)<=3,label+' gallery and card must be vertically balanced');
+     assert(Math.abs((metrics.gallery.left+metrics.card.right)/2-metrics.root.cx)<=3,label+' main detail group off-center');
+    }else{
+     assert(metrics.gallery.bottom<=metrics.card.top,label+' mobile information must follow gallery');
+     assert(Math.abs(metrics.gallery.cx-metrics.root.cx)<=3&&Math.abs(metrics.card.cx-metrics.root.cx)<=3,label+' mobile layout off-center');
+    }
+    if(metrics.related){
+     assert(metrics.related.top>=Math.max(metrics.gallery.bottom,metrics.card.bottom),label+' related dresses overlap hero');
+     assert(Math.abs(metrics.related.cx-metrics.root.cx)<=3,label+' related section off-center');
+    }
+   }
    if(listingRoutes.has(route)){
     const layout=await page.locator('#main-container #content-container .content-box.pexeto-woo-columns-4').evaluate(frame=>{
      const grid=frame.querySelector('ul.products[data-catalogue-preview]');
