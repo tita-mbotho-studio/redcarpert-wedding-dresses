@@ -444,7 +444,7 @@ test('Wedding Moments production HTML uses CDN thumbnails, preserves originals a
    'video poster must be optimized as a still');
  assert(html.includes('<link rel="preconnect" href="https://ik.imagekit.io">'),
    'page should open an ImageKit connection before its media requests');
- assert(html.includes('Showing 16 of 93 wedding moments'), 'initial gallery counter missing');
+ assert(html.includes('Showing 16 of 90 wedding moments'), 'initial gallery counter missing');
  assert(html.includes('data-wedding-moments-remaining'), 'deferred media template missing');
  assert(html.includes('data-wedding-load-more'), 'pagination control missing');
  assert(!html.includes(base.replace('/wedding-moments/','/redcarpert-wedding-dresses/wedding-moments/')),

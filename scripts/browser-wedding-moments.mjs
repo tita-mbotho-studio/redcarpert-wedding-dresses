@@ -90,7 +90,7 @@ try {
       assert(loadMoreStyle.paddingLeft<=14.5,width+'px Load More padding must shrink on phones');
     }
     const counter = page.locator("[data-wedding-count]");
-    assert.equal(await counter.textContent(), "Showing 16 of 93 wedding moments");
+    assert.equal(await counter.textContent(), "Showing 16 of " + totalMedia + " wedding moments");
     const assertCenteredCounter = async () => {
       const alignment = await counter.evaluate(node => {
         const box = node.getBoundingClientRect();
@@ -261,16 +261,18 @@ try {
       { timeout: 12000 });
     assert.equal(await player.getAttribute("src"), null, "close unloads video");
 
-    for (const expected of [32, 48, 64, 80, 93]) {
+    for (let expected = Math.min(32,totalMedia); ; expected = Math.min(expected+16,totalMedia)) {
       await loadMore.click();
       assert.equal(await cards.count(), expected, "Load More reveals another batch");
       assert.equal(await counter.textContent(),
         "Showing " + expected + " of " + totalMedia + " wedding moments");
+      if(expected===totalMedia) break;
     }
     assert.equal(await template.evaluate(el => el.content.children.length), 0);
     assert.equal(await loadMore.isVisible(), false, "Load More disappears when finished");
     await assertCenteredCounter();
     assert.equal(await gallery.locator("img").count(), totalMedia);
+    assert.deepEqual(await gallery.locator("button[data-wedding-media]").evaluateAll(els=>els.map(el=>el.getAttribute("data-wedding-src"))),media.map(item=>item.url),"complete gallery preserves exact video-first numerical URL order");
     assert.deepEqual(errors, [], "no JavaScript errors at " + width + "px");
     console.log("Wedding Moments real media PASS", width + "px",
       "image requests observed:", galleryImageRequests.length);
