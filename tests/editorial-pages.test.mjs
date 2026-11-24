@@ -74,7 +74,31 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
       const team=nodes(content.children).filter(n => n.attrs.class === 'redcarpert-editorial-team-card');
       const names=['Shantel','Refiloe','Olga','Mapaseka','Defny','Paula'];
       assert.equal(team.length,6,'About Us must display all six client-supplied models');
-      assert.match(JSON.stringify(content),/Your Dream Dress Starts Here/);
+      const story=content.children[0];
+      assert.equal(story.attrs.class,'redcarpert-editorial-story','client Our Story must appear first');
+      assert.equal(story.attrs['aria-labelledby'],'redcarpert-story-intro-title');
+      const storyHeading=story.children.find(child=>child.tag==='h2');
+      assert.deepEqual(storyHeading.children,['Welcome to Redcarpert Wedding Dresses']);
+      const approvedStory=[
+        'At Redcarpert Wedding Dresses, we believe every bride deserves to look and feel exceptional on her wedding day. We specialise in luxurious bridal wear, celebrating love, individuality and elegance.',
+        'Our collection features a beautiful range of white wedding gowns and modern traditional wedding gowns, carefully selected to cater to different bridal styles, tastes and cultural preferences.',
+        'Whether you envision yourself in a breathtaking white wedding gown or a beautifully designed modern traditional outfit, we are here to help you find a look that reflects your personality and brings your wedding-day vision to life.',
+        'We celebrate brides of every shape and size. Our collections offer a wide range of sizes, including plus sizes, so every bride can find a gown that makes her feel beautiful, confident and comfortable.',
+        'Your wedding day is your moment to shine, and we would be honoured to be part of your journey.',
+        'Redcarpert Wedding Dresses – Where Every Bride Finds Her Moment to Shine.',
+      ];
+      assert.deepEqual(story.children.filter(child=>child.tag==='p' && child.attrs.class!=='redcarpert-editorial-eyebrow').map(child=>child.children[0]),approvedStory,
+        'client-approved Our Story wording must be reproduced exactly');
+      const originalHero=content.children[1];
+      assert.equal(originalHero.attrs.class,'redcarpert-editorial-hero');
+      assert.deepEqual(originalHero.children.map(child=>child.children[0]),[
+        'Your Dream Dress Starts Here',
+        'Find a dress that feels like you.',
+        'Browse our wedding dress collections, find styles you love and message us on WhatsApp to ask about a dress or book a fitting.',
+      ],'the existing Your Dream section must retain its original copy');
+      assert.deepEqual(content.children.slice(2).map(child=>child.attrs['aria-labelledby']),[
+        'redcarpert-collections-title','redcarpert-fitting-title','redcarpert-team-title',
+      ],'all sections after Your Dream must retain their order');
       assert.match(JSON.stringify(content),/Book Your Fitting/);
       assert.match(JSON.stringify(content),/Meet Our Staff/);
        assert.match(JSON.stringify(content),/Meet our vibrant team/);
@@ -102,16 +126,28 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
       assert(!rendered.some(n=>n.attrs.id==='sidebar'),'empty sidebar must be removed from Contact Us');
       assert(rendered.some(n=>n.attrs.id==='full-width'),'Contact Us must use About Us content width');
       const contact=JSON.stringify(content);
-       const contactNumber=nodes(content.children).find(n=>n.attrs['data-contact-whatsapp-number']!==undefined);
-       const chatButton=nodes(content.children).find(n=>n.attrs['data-contact-whatsapp-action']!==undefined);
-       for(const control of [contactNumber,chatButton]){
-         assert.equal(control?.tag,'a');
+       const numberLinks=nodes(content.children).filter(n=>n.attrs['data-contact-whatsapp-number']!==undefined);
+       assert.equal(numberLinks.length,2,'one number in Contact Our Team and one beneath the map description');
+       assert.equal(nodes(content.children).filter(n=>n.attrs['data-contact-whatsapp-action']!==undefined).length,0,
+         'remove duplicate Chat on WhatsApp control');
+       for(const control of numberLinks){
+         assert.equal(control.tag,'a');
          assert.equal(control.attrs.href,buildWhatsAppUrl(generalFittingMessage()));
          assert.equal(control.attrs.target,'_blank');
          assert.equal(control.attrs.rel,'noopener noreferrer');
+         assert(control.children.includes('+27 68 045 8811'));
        }
-       assert(contactNumber.children.includes('+27 68 045 8811'));
-       assert(chatButton.children.includes('Chat on WhatsApp'));
+       assert.deepEqual(numberLinks[0],numberLinks[1],'map WhatsApp button must exactly duplicate Contact Our Team button');
+       const teamCard=nodes(content.children).find(n=>n.attrs.class==='redcarpert-contact-card');
+       assert.equal(nodes(teamCard.children).filter(n=>n.attrs['data-contact-whatsapp-number']!==undefined).length,1);
+       const mapPanel=nodes(content.children).find(n=>n.attrs.class==='redcarpert-editorial-panel redcarpert-editorial-location');
+       const mapParagraphIndex=mapPanel.children.findIndex(n=>n.tag==='p' && n.children.includes("We're in Pomona, Kempton Park. This map shows the general area."));
+       assert(mapParagraphIndex>=0);
+       assert.equal(mapPanel.children[mapParagraphIndex+1].attrs.class,'redcarpert-map-whatsapp',
+         'duplicate number button must appear immediately after the Pomona description');
+       assert.deepEqual(mapPanel.children[mapParagraphIndex+1].children,[numberLinks[1]]);
+       assert.equal(mapPanel.children[mapParagraphIndex+2].attrs.class,'redcarpert-editorial-map',
+         'the existing map must remain after the WhatsApp control');
        assert.equal(nodes(content.children).filter(n=>n.attrs['data-redcarpert-icon-cta']==='fitting').length,0,
          'the duplicate hero fitting control must be removed from Contact Us');
       const readText=value=>typeof value==='string'?value:value.children.map(readText).join(' ');
@@ -145,6 +181,16 @@ test('new Redcarpert editorial content reuses source shell and never exposes ori
     }
     assert.equal(JSON.stringify(capture), before);
   }
+});
+
+
+test('client story typography and Contact Us buttons are centered, fluid and content-sized',()=>{
+  const css=readFileSync('src/components/EditorialPages.css','utf8');
+  assert.match(css,/\.redcarpert-editorial-story h2\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
+  assert.match(css,/\.redcarpert-editorial-story p:not\(\.redcarpert-editorial-eyebrow\)\s*\{[^}]*clamp\([^}]*text-align:\s*center/s);
+  assert.match(css,/\.redcarpert-contact-number\s*\{[^}]*width:\s*fit-content;[^}]*max-width:\s*100%;/s);
+  assert.match(css,/\.redcarpert-map-whatsapp\s*\{[^}]*justify-content:\s*center;/s);
+  assert(!css.includes('.redcarpert-contact-chat'),'obsolete duplicate-button styling must be removed');
 });
 
 test('luxury editorial lookbook contains all catalogue dresses and accurate A4 pages', async () => {
