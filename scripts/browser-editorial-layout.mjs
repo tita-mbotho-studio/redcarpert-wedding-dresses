@@ -117,14 +117,17 @@ try {
             };
           })(),
           mapContact: (() => {
-            const group=wrap.querySelector('.redcarpert-map-whatsapp');
-            const number=group?.querySelector('[data-contact-whatsapp-number]');
+            const group=wrap.querySelector('.redcarpert-map-call');
+            const number=group?.querySelector('[data-contact-phone-call]');
             if(!group||!number)return null;
             return {
               ...box(number),
               group:box(group),
               href:number.getAttribute('href'),
               text:number.textContent.trim(),
+              iconClass:number.querySelector('i')?.className,
+              background:getComputedStyle(number).backgroundColor,
+              foreground:getComputedStyle(number).color,
               textAlign:getComputedStyle(number).textAlign,
               followsDescription:group.previousElementSibling?.textContent.trim()==="We're in Pomona, Kempton Park. This map shows the general area.",
             };
@@ -271,7 +274,7 @@ try {
       } else if (route === '/contact-us/') {
         assert.equal(metrics.actionButtons.length,1,'Contact Us keeps its browse-dresses action');
         const card=metrics.contactCard, mapButton=metrics.mapContact;
-        assert(card?.number && mapButton,width+'px Contact Us must show one team number and one matching map button');
+        assert(card?.number && mapButton,width+'px Contact Us must show one WhatsApp team number and one map telephone button');
         assert.equal(card.duplicateCount,1,'the duplicate team chat button must be absent');
         assert(card.width>0 && card.width<=Math.min(550,metrics.hero.width)+1,
           width+'px contact card must adapt to its container');
@@ -290,12 +293,15 @@ try {
         assert.equal(card.numberTextAlign,'center');
         assert.equal(mapButton.textAlign,'center');
         assert.equal(card.numberText,'+27 68 045 8811');
-        assert.equal(mapButton.text,card.numberText);
+        assert.equal(mapButton.text,'Call Us');
+        assert.equal(mapButton.iconClass,'fa-solid fa-phone');
         assert(card.numberHref?.startsWith('https://wa.me/27680458811?text='));
-        assert.equal(mapButton.href,card.numberHref);
-        assert(mapButton.followsDescription,'map WhatsApp button must be directly under the Pomona text');
+        assert.equal(mapButton.href,'tel:+27680458811');
+        assert.equal(mapButton.background,'rgb(245, 239, 231)','the Call Us button must have a neutral ivory fill');
+        assert.equal(mapButton.foreground,'rgb(87, 70, 52)','the Call Us button must have neutral brown text');
+        assert(mapButton.followsDescription,'Call Us must be directly under the Pomona text');
         assert(Math.abs(mapButton.center-mapButton.group.center)<=2,
-          width+'px map WhatsApp button must be centered');
+          width+'px map Call Us button must be centered');
         if(width>=390)assert(card.number.width<card.width-10,
           width+'px contact button must fit its text instead of spanning the whole card');
         assert(Math.abs(metrics.actionButtons[0].center-metrics.actionGroup.center)<=2,
