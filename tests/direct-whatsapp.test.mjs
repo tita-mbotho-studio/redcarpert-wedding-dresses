@@ -23,11 +23,13 @@ test('every approved page converts all on-site enquiry previews to native WhatsA
     const direct=all(updated.nodes).filter(node=>Object.hasOwn(node.attrs,'data-whatsapp-send'));
     assert(oldControls.length>=3,route+' must have at least footer, social and floating CTAs');
     assert.equal(direct.length,oldControls.length+(route==='/contact-us'?2:0),
-      route+' must convert every enquiry control, including both visible Contact Us links');
+      route+' must convert every enquiry control, including the two matching Contact Us number links');
     assert.equal(all(updated.nodes).filter(node=>Object.hasOwn(node.attrs,'data-whatsapp-preview')).length,0);
     if(route==='/contact-us'){
-      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-number')).length,1);
-      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-action')).length,1);
+      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-number')).length,2);
+      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-action')).length,0);
+      const buttons=direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-number'));
+      assert.deepEqual(buttons[0].children,buttons[1].children,'team and map buttons have identical icon and phone number');
     }
     for(const control of direct){
       assert.equal(control.tag,'a');
