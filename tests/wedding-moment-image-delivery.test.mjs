@@ -9,19 +9,19 @@ const all = nodes => nodes.flatMap(node => typeof node === 'string' ? [] : [node
 const photo = 'https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses/wedding-moments/wedding-moments-56.jpg';
 const videoPoster = 'https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses/wedding-moments/wedding-moments-88.mp4/ik-thumbnail.jpg';
 
-test('ImageKit tile transformations preserve entire image and source URLs', () => {
+test('ImageKit square tiles match CSS center crop; previews preserve the whole original', () => {
   const thumbnail = weddingMomentDeliveryImage(photo, 'tile');
   const preview = weddingMomentDeliveryImage(photo, 'preview');
-  assert.equal(thumbnail, photo + '?tr=w-640,h-640,c-at_max,q-72,f-auto');
-  assert.equal(preview, photo + '?tr=w-1920,h-1920,c-at_max,q-82,f-auto');
+  assert.equal(thumbnail, photo + '?tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto');
+  assert.equal(preview, photo + '?tr=w-1920,h-1920,c-at_max,q-95,f-auto');
   assert.equal(weddingMomentDeliveryImage(videoPoster,'tile'),
-    videoPoster + '?tr=w-640,h-640,c-at_max,q-72,f-auto');
+    videoPoster + '?tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto');
   assert.equal(weddingMomentDeliveryImage(photo + '?updatedAt=42','tile'),
-    photo + '?updatedAt=42&tr=w-640,h-640,c-at_max,q-72,f-auto');
+    photo + '?updatedAt=42&tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto');
   assert.equal(weddingMomentDeliveryImage(photo + '?tr=w-100','tile'),
     photo + '?tr=w-100');
   assert.equal(weddingMomentDeliveryImage(photo + '?v=2#details','tile'),
-    photo + '?v=2&tr=w-640,h-640,c-at_max,q-72,f-auto#details');
+    photo + '?v=2&tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto#details');
   assert.equal(weddingMomentDeliveryImage('https://another-cdn.example/photo.jpg','tile'),
     'https://another-cdn.example/photo.jpg');
 });
@@ -42,6 +42,8 @@ test('only first 16 wedding media cards load initially; thumbnails are not origi
     assert(original?.startsWith('https://ik.imagekit.io/'));
     assert.equal(image.attrs.src,weddingMomentDeliveryImage(original,'tile'));
     assert.equal(image.attrs.decoding,'async');
+    assert.match(image.attrs.srcset,/320w, .*480w, .*640w, .*960w, .*1280w$/);
+    assert.match(image.attrs.sizes,/46vw/);
   }
   assert.equal(images.filter(n=>n.attrs.loading==='eager').length,4);
   assert.equal(images.filter(n=>n.attrs.loading==='lazy').length,12);

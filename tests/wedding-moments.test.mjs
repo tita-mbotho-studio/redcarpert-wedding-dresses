@@ -100,7 +100,7 @@ test("gallery still supports client videos with accessible native controls and i
   const videoButton = triggers[1];
   const thumbnail = allNodes(videoButton.children).find(n => n.tag === "img");
   assert.equal(thumbnail.attrs.src,
-    "https://ik.imagekit.io/example/events/dance-cover.webp?tr=w-640,h-640,c-at_max,q-72,f-auto");
+    "https://ik.imagekit.io/example/events/dance-cover.webp?tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto");
   assert.equal(thumbnail.attrs["data-wedding-original-thumbnail"],
     "https://ik.imagekit.io/example/events/dance-cover.webp");
   assert.equal(videoButton.attrs["data-wedding-src"],

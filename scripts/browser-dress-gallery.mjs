@@ -46,8 +46,8 @@ const source=readFileSync('src/client/dress-gallery.js','utf8')
   // The isolated navigation fixture mocks the shared media transport; the
   // production page below exercises the actual imported delivery module.
   .replace("import { setMediaImage, preloadMediaImage } from './MediaDelivery.js';",
-    "const setMediaImage=(image,original,preset,ready)=>{image.dataset.mediaOriginal=original;image.src=ready??(original+'?tr='+(preset==='preview'?'w-1920,h-1920,c-at_max,q-82,f-auto':'w-1280,h-1800,c-at_max,q-82,f-auto'));};"+
-    "const preloadMediaImage=(original,preset)=>window.testGalleryLoad?window.testGalleryLoad(original,preset):Promise.resolve(original+'?tr=w-1280,h-1800,c-at_max,q-82,f-auto');")
+    "const setMediaImage=(image,original,preset,ready)=>{image.dataset.mediaOriginal=original;image.src=ready??(original+'?tr='+(preset==='preview'?'w-1920,h-1920,c-at_max,q-95,f-auto':'w-1280,h-1800,c-at_max,q-92,f-auto'));};"+
+    "const preloadMediaImage=(original,preset)=>window.testGalleryLoad?window.testGalleryLoad(original,preset):Promise.resolve(original+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');")
   .replace('export function initializeDressGalleries()', 'function initializeDressGalleries()')
   + '\nwindow.testInitializeDressGalleries = initializeDressGalleries;';
 const photos=[
@@ -88,14 +88,14 @@ try {
   await gallery.locator('[data-gallery-next]').click();
    await page.waitForFunction(()=>document.querySelector('[data-detail-gallery]').dataset.activePhoto==='1');
   assert.equal(await current(),1);
-  assert.equal(await image.getAttribute('src'),photos[1].url+'?tr=w-1280,h-1800,c-at_max,q-82,f-auto');
+  assert.equal(await image.getAttribute('src'),photos[1].url+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');
   assert.equal(await image.getAttribute('data-media-original'),photos[1].url);
   assert.equal(await image.getAttribute('alt'),photos[1].alt);
   assert.equal(await image.getAttribute('aria-label'),'Enlarge photograph 2 of 3');
   await image.click();
   await modal.waitFor({state:'visible'});
   assert.equal(await preview.getAttribute('alt'),photos[1].alt);
-  assert.equal(await preview.getAttribute('src'),photos[1].url+'?tr=w-1920,h-1920,c-at_max,q-82,f-auto');
+  assert.equal(await preview.getAttribute('src'),photos[1].url+'?tr=w-1920,h-1920,c-at_max,q-95,f-auto');
   assert.equal(await current(),1,'opening a photo must not change gallery index');
   await modal.locator('[data-dress-preview-close]').click();
   await modal.waitFor({state:'hidden'});
@@ -150,13 +150,13 @@ try {
   assert.equal(await current(),0,'second click must not show a wrong intermediate photo');
   await page.evaluate(()=>{
     const target=window.galleryPending.find(request=>request.original.includes('/back.webp'));
-    target.resolve(target.original+'?tr=w-1280,h-1800,c-at_max,q-82,f-auto');
+    target.resolve(target.original+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');
   });
   await page.waitForFunction(()=>document.querySelector('[data-detail-gallery]').dataset.activePhoto==='2');
   assert.equal(await counter.textContent(),'03 / 03');
   await page.evaluate(()=>{
     const stale=window.galleryPending.find(request=>request.original.includes('/side.webp'));
-    stale.resolve(stale.original+'?tr=w-1280,h-1800,c-at_max,q-82,f-auto');
+    stale.resolve(stale.original+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');
   });
   await page.waitForTimeout(50);
   assert.equal(await current(),2,'outdated async completion cannot overwrite most recent selection');

@@ -110,9 +110,12 @@ try {
       source: img.getAttribute('src'),
       original: img.dataset.weddingOriginalThumbnail,
       loading: img.loading,
+      srcset: img.getAttribute('srcset'),
+      sizes: img.getAttribute('sizes'),
     })));
     assert.equal(firstTiles.length,16);
-    assert(firstTiles.every(tile => new URL(tile.source).searchParams.get('tr') === 'w-640,h-640,c-at_max,q-72,f-auto'),
+    assert(firstTiles.every(tile=>tile.srcset?.includes('1280w')&&tile.sizes?.includes('46vw')),'responsive tile candidates and sizes must survive generation');
+    assert(firstTiles.every(tile => new URL(tile.source).searchParams.get('tr') === 'w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto'),
        'visible tiles should request compact ImageKit versions and retain updatedAt timestamps');
      assert(firstTiles.every(tile => tile.original?.startsWith('https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses/')),
       'all client original media URLs must remain accessible as fallbacks');

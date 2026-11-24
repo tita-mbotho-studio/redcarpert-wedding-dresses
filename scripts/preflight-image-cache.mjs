@@ -4,7 +4,7 @@ import {catalogueProducts} from '../src/data/catalogue.ts';
 import {photosForDress} from '../src/lib/dress-gallery.ts';
 import {homepageBackgrounds} from '../src/lib/homepage-backgrounds.ts';
 import {weddingMomentEvents} from '../src/lib/wedding-moments.ts';
-import {mediaDeliveryUrl} from '../src/lib/media-delivery.ts';
+import {mediaDeliveryUrl,mediaResponsiveVariants} from '../src/lib/media-delivery.ts';
 import imageLinks from '../src/data/image-links.json' with {type:'json'};
 import {buildImageCachePlan,warmImageCachePlan} from './lib/image-cache-preflight.mjs';
 
@@ -16,7 +16,7 @@ if (![...args].every(arg=>['--audit-only','--warm'].includes(arg)) ||
   throw new Error('Use --audit-only or --warm');
 const plan=buildImageCachePlan({
   catalogueProducts,photosForDress,homepageBackgrounds,
-  team:imageLinks.about_us.team,weddingMomentEvents,mediaDeliveryUrl,
+  team:imageLinks.about_us.team,weddingMomentEvents,mediaDeliveryUrl,mediaResponsiveVariants,
 });
 const fingerprint=createHash('sha256')
   .update(plan.requests.map(item=>item.url).sort().join('\n')).digest('hex');

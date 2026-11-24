@@ -1,6 +1,7 @@
 import imageLinks from "../data/image-links.json" with { type: "json" };
 import type { DocumentElement, DocumentNode } from "../types/site.ts";
 import { weddingMomentDeliveryImage } from "./wedding-moment-image-delivery.ts";
+import { mediaResponsiveAttrs } from "./media-delivery.ts";
 
 export const WEDDING_MOMENTS_PAGE_SIZE = 16;
 
@@ -106,7 +107,7 @@ function mediaCard(media: WeddingMomentMedia, index: number): DocumentElement {
     : "Watch " + media.caption;
   const thumbnailOriginal = media.type === "photo" ? media.url : media.poster;
   const thumbnail = node("img", {
-    src: weddingMomentDeliveryImage(thumbnailOriginal, "tile"),
+    ...mediaResponsiveAttrs(thumbnailOriginal, "tile"),
     "data-wedding-original-thumbnail": thumbnailOriginal,
     alt: media.type === "photo" ? media.alt : "",
     width: "370", height: "370",

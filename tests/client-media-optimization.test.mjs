@@ -17,7 +17,10 @@ const safeImage = (source,preset) => {
   assert.equal(target.pathname,original.pathname,'optimization must preserve the source asset');
   if(original.hostname==='ik.imagekit.io'){
     assert(target.searchParams.has('tr'),'ImageKit transform missing for '+source);
-    assert.match(target.searchParams.get('tr'),/^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/);
+    const tr=target.searchParams.get('tr');
+    if(preset==='tile')assert.match(tr,/^w-(\d+),h-\1,c-maintain_ratio,fo-center,q-90,f-auto$/);
+    else if(preset==='card')assert.match(tr,/^w-\d+,q-90,f-auto$/);
+    else assert.match(tr,/^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/);
   }else{
     assert.equal(target.searchParams.get('auto'),'compress');
     assert.equal(target.searchParams.get('cs'),'tinysrgb');
