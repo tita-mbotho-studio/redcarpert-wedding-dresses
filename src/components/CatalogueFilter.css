@@ -3,14 +3,15 @@
 .woocommerce-page .redcarpert-catalogue-filter {
   box-sizing:border-box;float:none!important;clear:both;display:flex;flex-wrap:wrap;
   justify-content:center;align-items:stretch;width:100%!important;max-width:840px;
-  gap:10px;margin:10px auto 34px!important;padding:15px 10px;
+  --redcarpert-filter-gap: var(--redcarpert-space-12);
+  gap:var(--redcarpert-filter-gap);margin:var(--redcarpert-space-12) auto var(--redcarpert-space-32)!important;padding:var(--redcarpert-space-16) var(--redcarpert-space-12);
   border-block:1px solid #eee8df;
 }
 .redcarpert-catalogue-filter button {
-  appearance:none;box-sizing:border-box;flex:0 0 calc((100% - 30px) / 4);
+  appearance:none;box-sizing:border-box;flex:0 0 calc((100% - var(--redcarpert-filter-gap) * 3) / 4);
   min-width:0;min-height:44px;max-width:210px;
   border:1px solid transparent;background:transparent;color:#71665d;
-  padding:9px 10px;font:500 clamp(11px,1vw,13px)/1.35 Montserrat,sans-serif;
+  padding:var(--redcarpert-space-8) var(--redcarpert-space-12);font:500 clamp(11px,1vw,13px)/1.35 Montserrat,sans-serif;
   letter-spacing:.04em;text-transform:uppercase;text-align:center;cursor:pointer;
   white-space:normal;overflow-wrap:break-word;
 }
@@ -28,17 +29,17 @@
 @media (max-width:1000px) {
   .woocommerce .redcarpert-catalogue-filter,
   .woocommerce-page .redcarpert-catalogue-filter {max-width:660px;}
-  .redcarpert-catalogue-filter button {flex-basis:calc((100% - 20px) / 3);}
+  .redcarpert-catalogue-filter button {flex-basis:calc((100% - var(--redcarpert-filter-gap) * 2) / 3);}
 }
 @media (max-width:640px) {
   .woocommerce .redcarpert-catalogue-filter,
   .woocommerce-page .redcarpert-catalogue-filter {
-    gap:8px;max-width:420px;margin:10px auto 20px!important;padding:12px 6px;
+    --redcarpert-filter-gap:var(--redcarpert-space-8);max-width:420px;margin:var(--redcarpert-space-12) auto var(--redcarpert-space-20)!important;padding:var(--redcarpert-space-12) var(--redcarpert-space-6);
   }
   .redcarpert-catalogue-filter button {
-    flex-basis:calc((100% - 8px) / 2);
+    flex-basis:calc((100% - var(--redcarpert-filter-gap)) / 2);
     min-height:44px;
-    padding:9px 6px;
+    padding:var(--redcarpert-space-8) var(--redcarpert-space-6);
     font-size:11px;
     letter-spacing:0;
   }

@@ -21,6 +21,36 @@ try{
     return [...document.querySelectorAll(selectors)].filter(el=>visible(el)&&el.textContent.trim()&&getComputedStyle(el).textAlign!=='center').map(el=>({text:el.textContent.trim().slice(0,100),alignment:getComputedStyle(el).textAlign}));
    });
    assert.deepEqual(issues,[],width+'px '+route);
+   // Implementation 82: computed component spacing, not just stylesheet text.
+   const spacing=await page.evaluate(()=>{
+    const read=(selector,property)=>{const el=document.querySelector(selector);return el?parseFloat(getComputedStyle(el)[property]):null;};
+    return {
+     captionGap:read('.redcarpert-catalogue-title','rowGap'),
+     captionTop:read('.redcarpert-catalogue-title','paddingTop'),
+     captionBottom:read('.redcarpert-catalogue-title','paddingBottom'),
+     filterGap:read('.redcarpert-catalogue-filter','columnGap'),
+     priceGap:read('.redcarpert-detail-price-options','rowGap'),
+     priceSeparator:read('.redcarpert-detail-price-option + .redcarpert-detail-price-option','paddingTop'),
+     priceLabelGap:read('.redcarpert-detail-price-label','marginBottom'),
+     fittingGap:read('.redcarpert-detail-actions.redcarpert-icon-cta','rowGap'),
+     contactGap:read('.redcarpert-contact-card','rowGap'),
+     footerGap:read('#footer[data-redcarpert-footer] .redcarpert-footer-items','rowGap'),
+    };
+   });
+   if(listingRoutes.has(route)){
+    assert.equal(spacing.captionGap,4,width+'px '+route+' card caption gap');
+    assert.equal(spacing.captionTop,width<=640?12:16,width+'px '+route+' card caption padding');
+    assert.equal(spacing.captionTop,spacing.captionBottom,width+'px '+route+' balanced card caption padding');
+   }
+   if(route==='/product')assert.equal(spacing.filterGap,width<=640?8:12,width+'px filter gap');
+   if(route.startsWith('/product/preview/')){
+    assert(spacing.priceGap>=12&&spacing.priceGap<=16,width+'px '+route+' price group gap');
+    assert.equal(spacing.priceGap,spacing.priceSeparator,width+'px '+route+' price separator symmetry');
+    assert.equal(spacing.priceLabelGap,4,width+'px '+route+' price label gap');
+    assert.equal(spacing.fittingGap,8,width+'px '+route+' fitting label gap');
+   }
+   if(route==='/contact-us')assert.equal(spacing.contactGap,width<=560?8:12,width+'px contact card gap');
+   assert.equal(spacing.footerGap,width<=640?4:8,width+'px '+route+' footer link gap');
    if(listingRoutes.has(route)){
     const layout=await page.locator('#main-container #content-container .content-box.pexeto-woo-columns-4').evaluate(frame=>{
      const grid=frame.querySelector('ul.products[data-catalogue-preview]');
