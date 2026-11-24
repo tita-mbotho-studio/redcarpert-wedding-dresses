@@ -530,16 +530,23 @@ test('only the two approved published icon CTAs remain; Contact Us uses direct c
  const contactHtml=readFileSync(path.join('dist','contact-us','index.html'),'utf8');
  assert(!contactHtml.includes('data-redcarpert-icon-cta="fitting"'),
    'Contact Us must not restore the removed, duplicate fitting CTA');
- for(const marker of ['data-contact-whatsapp-number','data-contact-whatsapp-action']){
-   const anchors=[...contactHtml.matchAll(/<a\b[^>]*>/g)].map(x=>x[0])
-     .filter(anchor=>anchor.includes(marker+'=""'));
-   assert.equal(anchors.length,1,'Contact Us must have one direct link for '+marker);
-   assert(anchors[0].includes('data-whatsapp-send=""'),
-     marker+' must be an approved native WhatsApp handoff');
-   assert(anchors[0].includes('href="https://wa.me/27680458811?text='),
-     marker+' must open WhatsApp with the general fitting message');
-   assert(anchors[0].includes('target="_blank"'));
-   assert(anchors[0].includes('rel="noopener noreferrer"'));
+ const phoneAnchors=[...contactHtml.matchAll(/<a\b[^>]*>/g)].map(x=>x[0])
+   .filter(anchor=>anchor.includes('data-contact-whatsapp-number=""'));
+ assert.equal(phoneAnchors.length,2,
+   'Contact Us must have one WhatsApp number link in Contact Our Team and one below the map description');
+ assert.equal(phoneAnchors[0],phoneAnchors[1],
+   'team and map WhatsApp number links must use identical attributes and destinations');
+ assert(!contactHtml.includes('data-contact-whatsapp-action=""'),
+   'the duplicate Chat on WhatsApp action must remain removed');
+ assert(contactHtml.includes('class="redcarpert-map-whatsapp"'),
+   'the map section must contain the duplicated WhatsApp number control');
+ for(const anchor of phoneAnchors){
+   assert(anchor.includes('data-whatsapp-send=""'),
+     'both contact number links must be approved native WhatsApp handoffs');
+   assert(anchor.includes('href="https://wa.me/27680458811?text='),
+     'both number links must open WhatsApp with the general fitting message');
+   assert(anchor.includes('target="_blank"'));
+   assert(anchor.includes('rel="noopener noreferrer"'));
  }
  const distinct=['/product','/wedding-moments','/product/preview/ball-gown-01'];
  for(const route of distinct){
