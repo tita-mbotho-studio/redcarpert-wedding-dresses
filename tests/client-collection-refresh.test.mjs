@@ -13,7 +13,7 @@ import { photosForDress, validateDressGalleryMappings } from '../src/lib/dress-g
 
 const root = 'https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses';
 
-test('updated homepage originals and ImageKit hero optimizations keep all three supplied revisions',()=>{
+test('all three homepage photographs retain exact original URLs and supplied revisions',()=>{
   const versions=['1794955340352','1794955340262','1794955340871'];
   assert.equal(imageLinks.home_page.hero.length,3);
   for (const [index,photo] of imageLinks.home_page.hero.entries()) {
@@ -25,7 +25,9 @@ test('updated homepage originals and ImageKit hero optimizations keep all three 
     assert.equal(url.searchParams.size,1);
     const delivered=new URL(mediaDeliveryUrl(photo.url,'hero'));
     assert.equal(delivered.searchParams.get('updatedAt'),versions[index]);
-    assert(delivered.searchParams.has('tr'));
+    assert.equal(delivered.href,photo.url,'homepage must use the exact original uploaded URL');
+    assert.equal(delivered.searchParams.size,1);
+    assert(!delivered.searchParams.has('tr'),'homepage must not add an ImageKit transformation');
   }
 });
 
