@@ -21,9 +21,9 @@ export function directWhatsAppHandoffs(document: SiteDocumentData, href: string)
     const isContactLink = Object.hasOwn(node.attrs, "data-contact-whatsapp-number") ||
       Object.hasOwn(node.attrs, "data-contact-whatsapp-action");
     if (isContactLink) {
-      // Only the two customer-visible Contact Us controls may become native
-      // WhatsApp anchors. The generated href must match the validated page
-      // enquiry exactly, not just share a trusted hostname.
+      // Only customer-visible Contact Us number links may become native
+      // WhatsApp anchors. Both team and map links must match the validated
+      // page enquiry exactly, not just share a trusted hostname.
       if (document.route !== "/contact-us" || node.tag !== "a" ||
           node.attrs.href !== href || node.attrs.target !== "_blank" ||
           node.attrs.rel !== "noopener noreferrer" ||
