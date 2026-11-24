@@ -888,10 +888,35 @@
   text-align: center;
   overflow-wrap: break-word;
 }
-#main-container .redcarpert-editorial-story .redcarpert-editorial-story-signoff {
+#main-container .redcarpert-editorial-story p.redcarpert-editorial-story-signoff {
   margin-top: clamp(20px, 3vw, 32px);
   color: #67503b;
   font-weight: 600;
+}
+
+/* Contact Us text scales without touching About Us sections below Your Dream. */
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] {
+  font-size: clamp(14px, 1.4vw, 16px);
+  text-align: center;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card-label {
+  font-size: clamp(10px, 1vw, 12px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card-helper {
+  font-size: clamp(12px, 1.2vw, 14px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps strong {
+  font-size: clamp(14px, 1.4vw, 16px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps p,
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-map-link {
+  font-size: clamp(12px, 1.2vw, 14px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps li {
+  text-align: center;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/about-us"] .redcarpert-editorial-story .redcarpert-editorial-eyebrow {
+  font-size: clamp(10px, 1.1vw, 12px);
 }
 
 /* Client review — one fluid contact card on phones, tablets and desktops. */
