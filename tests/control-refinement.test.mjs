@@ -21,7 +21,7 @@ test('filter selected, hover, focus and press states preserve existing target si
 test('primary, secondary and utility controls keep approved dimensions and behaviors',()=>{
  const home=css('HomepageExperience'), editorial=css('EditorialPages'), detail=css('ProductDetailPreview'), moments=css('WeddingMoments');
  assert.match(home,/a\.button:hover \{[^}]*background: rgba\(0,0,0,\.50\) !important;[^}]*box-shadow: inset/s);
- assert(editorial.includes('[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button'));
+ assert(editorial.includes('.redcarpert-icon-cta > a.button.redcarpert-icon-cta-button[download]'));
  for(const sheet of [editorial,detail]){
   assert(sheet.includes('width: clamp(36px, 3.4vw, 44px);'));
   assert(sheet.includes('height: clamp(36px, 3.4vw, 44px);'));

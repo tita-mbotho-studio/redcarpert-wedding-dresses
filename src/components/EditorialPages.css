@@ -1056,14 +1056,14 @@
 }
 
 /* Secondary PDF download; do not override the later WhatsApp brand rules. */
-#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button {
+#main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button[download] {
   color: var(--redcarpert-control-ink) !important;
   background: #fff !important;
 }
-#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button:hover {
+#main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button[download]:hover {
   background: #f0e7dc !important;
 }
-#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button:active {
+#main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button[download]:active {
   box-shadow: inset 0 0 0 1px currentColor;
 }
 /* Plain telephone and map actions remain text links, not buttons. */
