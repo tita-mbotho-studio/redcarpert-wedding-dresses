@@ -5,7 +5,10 @@
   justify-content:center;align-items:stretch;width:100%!important;max-width:840px;
   --redcarpert-filter-gap: var(--redcarpert-space-12);
   gap:var(--redcarpert-filter-gap);margin:var(--redcarpert-space-12) auto var(--redcarpert-space-32)!important;padding:var(--redcarpert-space-16) var(--redcarpert-space-12);
-  border-block:1px solid #eee8df;
+  /* The filter's whitespace already separates it from the heading.
+     Keep the original border space but remove the redundant top rule. */
+  border-block:1px solid var(--redcarpert-surface-edge-quiet);
+  border-block-start-color:transparent;
 }
 .redcarpert-catalogue-filter button {
   appearance:none;box-sizing:border-box;flex:0 0 calc((100% - var(--redcarpert-filter-gap) * 3) / 4);
