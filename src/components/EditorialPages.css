@@ -880,7 +880,7 @@
   text-align: center;
   overflow-wrap: break-word;
 }
-#main-container .redcarpert-editorial-story p:not(.redcarpert-editorial-eyebrow) {
+#main-container .redcarpert-editorial-story p {
   max-width: 760px;
   margin: 0 auto clamp(14px, 2vw, 22px);
   font-size: clamp(14px, 1.5vw, 16px);
@@ -914,9 +914,6 @@
 }
 #main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps li {
   text-align: center;
-}
-#main-container .redcarpert-editorial[data-editorial-route="/about-us"] .redcarpert-editorial-story .redcarpert-editorial-eyebrow {
-  font-size: clamp(10px, 1.1vw, 12px);
 }
 
 /* Client review — one fluid contact card on phones, tablets and desktops. */
