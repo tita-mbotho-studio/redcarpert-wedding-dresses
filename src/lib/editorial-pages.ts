@@ -1,6 +1,6 @@
 import type { DocumentElement, DocumentNode, SiteDocumentData } from "@/types/site";
 import imageLinks from "../data/image-links.json" with { type: "json" };
-import { WHATSAPP_DISPLAY_NUMBER, buildWhatsAppUrl } from "../config/whatsapp.ts";
+import { WHATSAPP_DISPLAY_NUMBER, WHATSAPP_NUMBER, buildWhatsAppUrl } from "../config/whatsapp.ts";
 import { generalFittingMessage } from "./whatsapp-messages.ts";
 import { weddingMomentEvents, flattenWeddingMomentEvents, renderWeddingMomentGallery } from "./wedding-moments.ts";
 
@@ -36,6 +36,14 @@ const contactWhatsAppNumber = () => node("a", {
   rel: "noopener noreferrer",
   "aria-label": "WhatsApp Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
 }, [node("i", { class: "fa-brands fa-whatsapp", "aria-hidden": "true" }, []), WHATSAPP_DISPLAY_NUMBER]);
+
+/** Map-location action: native phone dialler, independent of WhatsApp. */
+const contactPhoneCall = () => node("a", {
+  class: "redcarpert-contact-call",
+  "data-contact-phone-call": "",
+  href: "tel:+" + WHATSAPP_NUMBER,
+  "aria-label": "Call Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
+}, [node("i", { class: "fa-solid fa-phone", "aria-hidden": "true" }, []), "Call Us"]);
 
 function editorialContent(route: EditorialRoute): DocumentNode[] {
   if (route === "/digital-lookbook") return [
@@ -139,7 +147,7 @@ function editorialContent(route: EditorialRoute): DocumentNode[] {
       h("Our Location", "redcarpert-map-title"),
       node("p", { class: "redcarpert-editorial-lead" }, ["Pomona · Kempton Park · Gauteng"]),
       p("We're in Pomona, Kempton Park. This map shows the general area."),
-      node("div", { class: "redcarpert-map-whatsapp", "aria-label": "WhatsApp contact for fitting directions" }, [contactWhatsAppNumber()]),
+      node("div", { class: "redcarpert-map-call", "aria-label": "Call Redcarpert Wedding Dresses" }, [contactPhoneCall()]),
       node("div", { class: "redcarpert-editorial-map" }, [
         node("iframe", {
           title: "Map of the Pomona area in Kempton Park, Gauteng, South Africa",
