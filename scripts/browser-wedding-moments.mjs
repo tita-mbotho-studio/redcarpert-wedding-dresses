@@ -10,7 +10,7 @@ const firstPhotoSource=media.find(item=>item.type==='photo').url;
 const totalMedia=media.length;
 try {
   for (const width of [1440, 1000, 768, 640, 390, 320]) {
-    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: width===390?3:width===768?2:1 });
     // The media request is mocked below, so observe play() instead of expecting
     // an empty MP4 response to decode. Also exercise a browser playback denial.
     await page.addInitScript(blockAudioPlayback => {
@@ -115,6 +115,13 @@ try {
     })));
     assert.equal(firstTiles.length,16);
     assert(firstTiles.every(tile=>tile.srcset?.includes('1280w')&&tile.sizes?.includes('46vw')),'responsive tile candidates and sizes must survive generation');
+    await gallery.locator('img').first().evaluate(img=>img.decode());
+    const firstSelection=await gallery.locator('img').first().evaluate(img=>({
+      selected:img.currentSrc, candidates:img.getAttribute('srcset').split(', ').map(value=>value.split(' ')[0]),
+    }));
+    assert(firstSelection.candidates.includes(firstSelection.selected),'browser must load one approved responsive derivative');
+    assert(galleryImageRequests.includes(firstSelection.selected),'selected thumbnail must have been requested');
+
     assert(firstTiles.every(tile => new URL(tile.source).searchParams.get('tr') === 'w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto'),
        'visible tiles should request compact ImageKit versions and retain updatedAt timestamps');
      assert(firstTiles.every(tile => tile.original?.startsWith('https://ik.imagekit.io/kw8awoqvwi/red-carpet-wedding-dresses/')),
