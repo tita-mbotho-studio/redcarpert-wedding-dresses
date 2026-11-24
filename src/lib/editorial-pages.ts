@@ -56,7 +56,6 @@ function editorialContent(route: EditorialRoute): DocumentNode[] {
   }
   if (route === "/about-us") return [
     node("section", { class: "redcarpert-editorial-story", "aria-labelledby": "redcarpert-story-intro-title" }, [
-      node("p", { class: "redcarpert-editorial-eyebrow" }, ["OUR STORY"]),
       node("h2", { id: "redcarpert-story-intro-title" }, ["Welcome to Redcarpert Wedding Dresses"]),
       p("At Redcarpert Wedding Dresses, we believe every bride deserves to look and feel exceptional on her wedding day. We specialise in luxurious bridal wear, celebrating love, individuality and elegance."),
       p("Our collection features a beautiful range of white wedding gowns and modern traditional wedding gowns, carefully selected to cater to different bridal styles, tastes and cultural preferences."),
