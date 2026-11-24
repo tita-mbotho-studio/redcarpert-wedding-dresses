@@ -17,7 +17,7 @@ npm run test:dist
 npm run dev
 ```
 
-Visit `http://localhost:5173/redcarpert-wedding-dresses/`. Changes to catalogue data or page adapters require restarting `npm run dev` to regenerate the HTML.
+Visit `http://localhost:5173/redcarpert-wedding-dresses-main/`. Changes to catalogue data or page adapters require restarting `npm run dev` to regenerate the HTML.
 
 ## Data and media
 
@@ -35,14 +35,14 @@ npm run test:dist
 npm run preview -- --port 4173
 ```
 
-The production preview is at `http://localhost:4173/redcarpert-wedding-dresses/`. With the preview running, `npm run test:browser` executes Chromium regression checks for the catalogue, galleries, navigation, WhatsApp messages, responsive layouts and interactive lookbook.
+The production preview is at `http://localhost:4173/redcarpert-wedding-dresses-main/`. With the preview running, `npm run test:browser` executes Chromium regression checks for the catalogue, galleries, navigation, WhatsApp messages, responsive layouts and interactive lookbook.
 
 ## GitHub Pages
 
-After renaming the repository and completing an approved manual deployment, the public website should be:
+The independent repository's public Pages address (after a successful approved deployment) is:
 
-**https://tita-mbotho-studio.github.io/redcarpert-wedding-dresses/**
+**https://tita-mbotho-studio.github.io/redcarpert-wedding-dresses-main/**
 
 The GitHub Pages base is defined in `src/config/site.ts` and reused by Vite and the generator. The production workflow at `.github/workflows/pages.yml` has a manual `workflow_dispatch` trigger only. Commits and pull requests do not deploy automatically. Always run full checks before manually deploying.
 
-**Repository rename migration:** The old `/redcarpert-prototype/` GitHub Pages URL is **not automatically redirected** when the repository is renamed. Rename the repository in GitHub Settings, then publish and verify the new path before sharing the updated client URL. See `docs/implementation-66-repository-rename.md`.
+****Independent repository migration:** The former forked repository and its published site remain separate. Pages must be enabled and configured to publish with GitHub Actions in the independent repository; keep the original site unchanged until the new address is verified.

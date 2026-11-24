@@ -29,7 +29,7 @@ try {
       body:'<!doctype html><html><head><title>WhatsApp test handoff</title></head><body>Offline intercepted handoff</body></html>',
     }));
     const page=await context.newPage();
-    await page.goto('http://localhost:4173/redcarpert-wedding-dresses'+route,{waitUntil:'domcontentloaded'});
+    await page.goto('http://localhost:4173/redcarpert-wedding-dresses-main'+route,{waitUntil:'domcontentloaded'});
     assert(await page.locator('#redcarpert-floating-whatsapp [data-whatsapp-send]').isVisible(),
       name+' WhatsApp floating CTA must appear on all devices');
     assert(await page.locator('#redcarpert-floating-whatsapp [data-dismiss-whatsapp]').isVisible(),
@@ -103,7 +103,7 @@ try {
         'mobile X must dismiss the widget');
       assert.equal(context.pages().length,1,'mobile X must not open WhatsApp');
       assert.equal(await page.evaluate(()=>sessionStorage.getItem('redcarpert-floating-whatsapp-dismissed')),'1');
-      await page.goto('http://localhost:4173/redcarpert-wedding-dresses/about-us/',{waitUntil:'domcontentloaded'});
+      await page.goto('http://localhost:4173/redcarpert-wedding-dresses-main/about-us/',{waitUntil:'domcontentloaded'});
       assert(await page.locator('#redcarpert-floating-whatsapp').isHidden(),
         'mobile dismissal must persist during navigation in the same tab');
     }
@@ -113,7 +113,7 @@ try {
       await close.click();
       assert(await page.locator('#redcarpert-floating-whatsapp').isHidden());
       assert.equal(await page.evaluate(()=>sessionStorage.getItem('redcarpert-floating-whatsapp-dismissed')),'1');
-      await page.goto('http://localhost:4173/redcarpert-wedding-dresses/about-us/',{waitUntil:'domcontentloaded'});
+      await page.goto('http://localhost:4173/redcarpert-wedding-dresses-main/about-us/',{waitUntil:'domcontentloaded'});
       assert(await page.locator('#redcarpert-floating-whatsapp').isHidden(),'dismissal must persist across pages');
       const footer=page.locator('#footer .redcarpert-footer-social-whatsapp');
       const [footerPopup]=await Promise.all([context.waitForEvent('page'),footer.click()]);
