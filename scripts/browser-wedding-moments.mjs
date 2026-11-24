@@ -1,7 +1,6 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
 import { weddingMomentEvents, flattenWeddingMomentEvents } from "../src/lib/wedding-moments.ts";
-import { weddingMomentDeliveryImage } from "../src/lib/wedding-moment-image-delivery.ts";
 
 const browser = await chromium.launch({ args: ["--no-sandbox"] });
 const media=flattenWeddingMomentEvents(weddingMomentEvents);
@@ -185,7 +184,8 @@ try {
     assert.equal(await firstPhoto.getAttribute("data-wedding-src"),
       firstPhotoSource);
     assert.equal(await firstPhoto.getAttribute("data-wedding-preview-src"),
-      weddingMomentDeliveryImage(firstPhotoSource,'preview'));
+      firstPhotoSource);
+    assert(!galleryImageRequests.includes(firstPhotoSource),'original photo must not download before enlargement');
     await firstPhoto.click();
     const dialog = page.locator("#redcarpert-wedding-preview");
     assert(await dialog.evaluate(el => el.open));
@@ -195,6 +195,7 @@ try {
       const image = document.querySelector('[data-wedding-preview-photo]');
       return image?.complete && image.naturalWidth > 0;
     }, { timeout: 12000 });
+    assert.equal(await fullImage.getAttribute("src"),firstPhotoSource,"modal must request the exact original");
     assert.equal(await fullImage.evaluate(el => getComputedStyle(el).objectFit), "contain");
     const photoFrame = await dialog.evaluate(el => {
       const inner = el.querySelector('.redcarpert-moment-dialog-inner');

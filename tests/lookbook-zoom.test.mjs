@@ -15,6 +15,10 @@ test('the lookbook photograph itself is the only zoom target: no icon, button or
   assert.equal((html.match(/role="button" tabindex="0" aria-haspopup="dialog"/g) ?? []).length,lookbookPlacements(catalogueProducts).length);
   assert.equal((html.match(/data-book-zoom-original="https:\/\//g) ?? []).length,lookbookPlacements(catalogueProducts).length);
   assert.equal((html.match(/data-book-zoom-src="https:\/\//g) ?? []).length,lookbookPlacements(catalogueProducts).length);
+  for(const match of html.matchAll(/data-book-zoom-src="([^"]+)" data-book-zoom-original="([^"]+)"/g)){
+    assert.equal(match[1],match[2]);
+    assert(!new URL(match[1].replaceAll("&amp;","&")).searchParams.has("tr"));
+  }
   assert.equal((html.match(/class="redcarpert-book-photo"/g) ?? []).length,lookbookPlacements(catalogueProducts).length);
   assert.doesNotMatch(html,/data-book-zoom-trigger|redcarpert-book-zoom-trigger|redcarpert-book-zoom-controls|data-book-zoom-stage/);
   assert.doesNotMatch(html,/data-book-zoom-in|data-book-zoom-out|data-book-zoom-reset|data-book-zoom-percent/);

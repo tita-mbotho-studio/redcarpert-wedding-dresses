@@ -70,6 +70,7 @@ try {
         await modal.waitFor({state:'visible'});
         assert.equal(await current(),position,'photo click must not flip PageFlip');
         assert.equal(await modal.locator('.redcarpert-wedding-preview-image').count(),1);
+        assert.equal(await modal.locator('[data-book-zoom-image]').getAttribute('src'),await image.getAttribute('data-book-zoom-original'),'enlargement must show original');
         assert.equal(await modal.locator('[data-book-zoom-in],[data-book-zoom-out]').count(),0);
         await page.keyboard.press('Escape');
         await modal.waitFor({state:'hidden'});

@@ -82,6 +82,7 @@ test("all three homepage photos are client-supplied remote WebP assets in natura
     assert.equal(item.section,i);
     assert.deepEqual([item.original,item.replacement],expectedImages[i]);
     assert.equal(item.delivery,mediaDeliveryUrl(item.replacement,"hero"));
+    assert.equal(item.delivery,item.replacement,"homepage must request the original image");
     const url=new URL(item.replacement);
     assert.equal(url.protocol,"https:");
     assert.equal(url.hostname,"ik.imagekit.io");

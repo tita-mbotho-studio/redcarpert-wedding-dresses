@@ -93,3 +93,15 @@ test('cache plan includes deduplicated responsive variants and accepts only appr
  assert.equal(result.requests.filter(item=>item.preset==='card').length,1);
  assert.equal(new Set(result.requests.map(item=>item.url)).size,result.requests.length);
 });
+
+test('cache audit distinguishes original-only homepage and modal requests from derivatives',async()=>{
+ const input={catalogueProducts:[],photosForDress:()=>[],homepageBackgrounds:[{replacement:client}],
+  team:[],weddingMomentEvents:[{media:[{type:'photo',url:photo2}]}],
+  mediaDeliveryUrl:(source,preset)=>preset==='hero'||preset==='preview'?source:transform(source,preset)};
+ const plan=buildImageCachePlan(input);
+ assert.equal(plan.requests.filter(item=>item.url===item.source).length,2);
+ const report=await warmImageCachePlan(plan,{fetchImpl:async()=>picture(),workers:1});
+ assert.equal(report.originals,2);
+ assert.equal(report.optimized,1);
+ assert.equal(report.originalFallbacks,0);
+});

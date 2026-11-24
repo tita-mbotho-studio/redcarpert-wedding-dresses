@@ -11,14 +11,12 @@
 export type MediaImagePreset =
   | "tile" | "card" | "detail" | "preview" | "lookbook" | "team" | "hero";
 
-const presets: Record<MediaImagePreset, { width: number; height: number; quality: number }> = {
+const presets: Record<Exclude<MediaImagePreset, "hero" | "preview">, { width: number; height: number; quality: number }> = {
   tile:     { width: 640,  height: 640,  quality: 90 },
   card:     { width: 740,  height: 740,  quality: 90 },
   detail:   { width: 1280, height: 1800, quality: 92 },
-  preview:  { width: 1920, height: 1920, quality: 95 },
   lookbook: { width: 1200, height: 1600, quality: 92 },
   team:     { width: 900,  height: 1200, quality: 90 },
-  hero:     { width: 2000, height: 2000, quality: 92 },
 };
 
 // Restrict variant widths to a finite cache-friendly set. Grid widths refer
