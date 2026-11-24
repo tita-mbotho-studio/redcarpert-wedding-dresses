@@ -299,23 +299,24 @@
   border: 1px solid rgba(148, 123, 92, .28);
   border-radius: 50%;
   background: rgba(253, 251, 248, .93);
-  color: #4c4035;
+  color: var(--redcarpert-control-ink);
   box-shadow: 0 3px 12px rgba(41, 29, 22, .1);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
-  transition: background .18s ease, box-shadow .18s ease;
+  transition: background-color var(--redcarpert-control-duration) ease, box-shadow var(--redcarpert-control-duration) ease;
 }
 .redcarpert-book-controls button:not(:disabled):hover {
   background: #fdfbf8;
   box-shadow: 0 5px 16px rgba(41, 29, 22, .16);
 }
+.redcarpert-book-controls button:not(:disabled):active { box-shadow: inset 0 0 0 1px currentColor; }
 .redcarpert-book-controls button:disabled { opacity: .35; cursor: not-allowed; }
 .redcarpert-book-controls button:focus-visible {
-  outline: 2px solid #947b5c;
+  outline: 2px solid var(--redcarpert-control-focus);
   outline-offset: 3px;
 }
-.redcarpert-book a:focus-visible { outline: 2px solid #a47749; outline-offset: 3px; }
+.redcarpert-book a:focus-visible { outline: 2px solid var(--redcarpert-control-focus); outline-offset: 3px; }
 .redcarpert-book-controls [data-book-status] {
   min-width: 86px;
   text-align: center;
@@ -471,7 +472,7 @@
   box-sizing: border-box;
   padding: 9px 12px;
   border: 1px solid #b99564;
-  color: #916c46;
+  color: var(--redcarpert-control-ink);
   background: #fff;
   text-align: center;
   text-decoration: none;
@@ -479,6 +480,7 @@
   letter-spacing: .025em;
   white-space: normal;
   overflow-wrap: break-word;
+  transition: background-color var(--redcarpert-control-duration) ease, color var(--redcarpert-control-duration) ease, border-color var(--redcarpert-control-duration) ease;
 }
 /* A single action (such as Browse Wedding Dresses) stays comfortably sized. */
 .redcarpert-editorial .redcarpert-editorial-action:only-child {
@@ -487,8 +489,14 @@
 .redcarpert-editorial .redcarpert-editorial-action:hover,
 .redcarpert-editorial .redcarpert-editorial-action:focus-visible {
   background: #f0e7dc;
-  color: #725034;
+  color: var(--redcarpert-control-ink);
   outline-offset: 3px;
+}
+.redcarpert-editorial .redcarpert-editorial-action:focus-visible {
+  outline: 2px solid var(--redcarpert-control-focus);
+}
+.redcarpert-editorial .redcarpert-editorial-action:active {
+  box-shadow: inset 0 0 0 1px currentColor;
 }
 .redcarpert-editorial .button[data-whatsapp-send],
 .redcarpert-editorial .redcarpert-lookbook-download a.button {
@@ -835,7 +843,7 @@
   box-shadow: 0 5px 14px rgba(41, 29, 22, .13);
 }
 #main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button:focus-visible {
-  outline: 2px solid #947b5c !important;
+  outline: 2px solid var(--redcarpert-control-focus) !important;
   outline-offset: 3px;
 }
 @media (max-width: 640px) {
@@ -1045,4 +1053,26 @@
 @media (max-width: 360px) {
   #main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card { padding: 14px 10px; }
   #main-container .redcarpert-editorial a.redcarpert-contact-number { font-size: 15px; }
+}
+
+/* Secondary PDF download; do not override the later WhatsApp brand rules. */
+#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button {
+  color: var(--redcarpert-control-ink) !important;
+  background: #fff !important;
+}
+#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button:hover {
+  background: #f0e7dc !important;
+}
+#main-container .redcarpert-editorial .redcarpert-icon-cta[data-redcarpert-icon-cta="download"] > a.button.redcarpert-icon-cta-button:active {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+/* Plain telephone and map actions remain text links, not buttons. */
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:hover {
+  text-underline-offset: 3px;
+}
+#main-container .redcarpert-editorial .redcarpert-map-call a:focus-visible {
+  outline-color: var(--redcarpert-control-focus);
+}
+@media (prefers-reduced-motion: reduce) {
+  .redcarpert-editorial .redcarpert-editorial-action { transition: none; }
 }

@@ -294,7 +294,10 @@ body.redcarpert-home-native .fullpage-scroll-arrow .fa-chevron-down {
   .redcarpert-book-controls button {
     transition: none;
   }
-
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger:hover,
+  #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss:hover {
+    transform: none;
+  }
 }
 
 /* Use matching icon typography for the header, gallery accents and controls. */

@@ -42,7 +42,14 @@ try{
     assert.equal(spacing.captionTop,width<=640?12:16,width+'px '+route+' card caption padding');
     assert.equal(spacing.captionTop,spacing.captionBottom,width+'px '+route+' balanced card caption padding');
    }
-   if(route==='/product')assert.equal(spacing.filterGap,width<=640?8:12,width+'px filter gap');
+   if(route==='/product'){
+    assert.equal(spacing.filterGap,width<=640?8:12,width+'px filter gap');
+    const selected=page.locator('.redcarpert-catalogue-filter button[aria-pressed="true"]');
+    assert.equal(await selected.count(),1,'exactly one selected filter');
+    const before=await selected.evaluate(el=>({color:getComputedStyle(el).color,border:getComputedStyle(el).borderTopColor}));
+    assert.equal(before.color,'rgb(153, 0, 31)',width+'px active filter text');
+    assert.equal(before.border,'rgb(153, 0, 31)',width+'px active filter border');
+   }
    if(route.startsWith('/product/preview/')){
     assert(spacing.priceGap>=12&&spacing.priceGap<=16,width+'px '+route+' price group gap');
     assert.equal(spacing.priceGap,spacing.priceSeparator,width+'px '+route+' price separator symmetry');

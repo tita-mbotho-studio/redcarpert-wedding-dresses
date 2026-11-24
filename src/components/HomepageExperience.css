@@ -261,6 +261,10 @@ body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.bu
 body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.button:hover {
   background: rgba(0,0,0,.50) !important;
   border-color: #fff !important;
+  box-shadow: inset 0 0 0 1px #fff;
+}
+body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.button:active {
+  box-shadow: inset 0 0 0 2px #fff;
 }
 body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.button:focus-visible {
   outline: 2px solid #fff;
