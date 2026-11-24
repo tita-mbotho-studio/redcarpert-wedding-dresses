@@ -107,7 +107,8 @@ test('optimized-image fallback remains central, rather than hardcoded per page',
     assert(!/w-\d+,h-\d+,c-at_max/.test(source),file+' hardcodes a duplicate CDN transform');
   }
   const pipeline=readFileSync('scripts/lib/lookbook-assets.ts','utf8');
-  assert(pipeline.includes('withoutEnlargement:true'),'PDF images must never be upscaled');
-  assert(pipeline.includes('mozjpeg:true'),'PDF JPGs must use compression');
+  assert(!/\.resize\(/.test(pipeline),'PDF images must never be resized');
+  assert(!/\.jpeg\(/.test(pipeline),'PDF images must never undergo lossy JPEG encoding');
+  assert(pipeline.includes('palette:false'),'PDF PNG encoding must not quantize source pixels');
   assert(pipeline.includes('estimateLookbookPrintDpi'),'PDF print quality must be audited');
 });

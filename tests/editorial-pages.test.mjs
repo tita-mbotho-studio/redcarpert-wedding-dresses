@@ -208,8 +208,8 @@ test('client story typography and Contact Us buttons are centered, fluid and con
 });
 
 test('luxury editorial lookbook contains all catalogue dresses and accurate A4 pages', async () => {
-  const jpeg=await sharp({create:{width:24,height:36,channels:3,background:'#eee8df'}}).jpeg().toBuffer();
-  const images=catalogueProducts.map(dress=>({id:dress.id,jpeg,width:24,height:36}));
+  const png=await sharp({create:{width:24,height:36,channels:3,background:'#eee8df'}}).png().toBuffer();
+  const images=catalogueProducts.map(dress=>({id:dress.id,png,width:24,height:36}));
   const placements=lookbookPlacements(catalogueProducts);
   const html=createLuxuryLookbookHtml(catalogueProducts,images,{year:2026,logo:Buffer.from('89504e470d0a1a0a','hex')});
   const online=createNodeRenderer([])({tag:'div',attrs:{'data-lookbook-viewer':'true'},children:[]});

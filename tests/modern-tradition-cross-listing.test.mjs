@@ -51,7 +51,7 @@ test('Modern Tradition category links to all six new detail pages without numeri
 test('Digital Lookbook and PDF include 53 unique dresses and correct pricing slots',()=>{
  const placements=lookbookPlacements(catalogueProducts);
  const html=createNodeRenderer([])({tag:'div',attrs:{'data-lookbook-viewer':'true'},children:[]});
- const images=catalogueProducts.map(p=>({id:p.id,jpeg:Buffer.from([0xff,0xd8,0xff,0xd9]),width:1200,height:1800}));
+ const images=catalogueProducts.map(p=>({id:p.id,png:Buffer.from([137,80,78,71,13,10,26,10]),width:1200,height:1800}));
  const pdf=createLuxuryLookbookHtml(catalogueProducts,images,{year:2026,logo:Buffer.from([0x89,0x50,0x4e,0x47])});
  assert.equal(placements.length,53);
  assert.equal((html.match(/data-book-page=/g)||[]).length,55);

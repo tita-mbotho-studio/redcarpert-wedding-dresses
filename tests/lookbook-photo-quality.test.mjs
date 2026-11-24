@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -5,6 +6,7 @@ import {
   estimateLookbookPrintDpi,
   shouldReportLookbookPrintWarning,
   downloadLookbookClientImage,
+  prepareOriginalLookbookPhoto,
 } from '../scripts/lib/lookbook-assets.ts';
 
 test('small client-supplied Ball Gown photos do not prevent PDF/site generation', () => {
@@ -113,4 +115,17 @@ test('repeated network timeout eventually fails the PDF build after three attemp
   );
   assert.equal(calls,3);
   assert.deepEqual(delays,[1000,2000]);
+});
+
+test('full-resolution PDF PNG preserves every decoded RGB pixel above the old resize cap',async()=>{
+ const width=2101,height=2501;
+ const pixels=Buffer.alloc(width*height*3);
+ for(let i=0;i<pixels.length;i++)pixels[i]=(i*31+(i>>>8))&255;
+ const original=await sharp(pixels,{raw:{width,height,channels:3}}).webp({lossless:true}).toBuffer();
+ const decoded=await sharp(original).raw().toBuffer();
+ const png=await prepareOriginalLookbookPhoto(original,'large-photo');
+ const result=await sharp(png).raw().toBuffer({resolveWithObject:true});
+ assert.equal(result.info.width,width);
+ assert.equal(result.info.height,height);
+ assert.deepEqual(result.data,decoded);
 });
