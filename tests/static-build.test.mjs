@@ -437,7 +437,7 @@ test('Wedding Moments production HTML uses CDN thumbnails, preserves originals a
  assert(html.includes('data-wedding-src="'+esc(photo.url)+'"'),
    'original WebP must remain available for fallback');
  assert(html.includes('data-wedding-preview-src="'+esc(mediaDeliveryUrl(photo.url,'preview'))+'"'),
-   'uploaded WebP preview must use the shared CDN preset');
+   'uploaded WebP preview must use the exact original URL');
  assert(html.includes('data-wedding-src="'+esc(video.url)+'"'),
    'playback URL must preserve the exact new client MP4 link');
  assert(html.includes('src="'+esc(mediaDeliveryUrl(video.poster,'tile'))+'"'),

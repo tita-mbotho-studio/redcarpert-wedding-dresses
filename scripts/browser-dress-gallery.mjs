@@ -46,7 +46,7 @@ const source=readFileSync('src/client/dress-gallery.js','utf8')
   // The isolated navigation fixture mocks the shared media transport; the
   // production page below exercises the actual imported delivery module.
   .replace("import { setMediaImage, preloadMediaImage } from './MediaDelivery.js';",
-    "const setMediaImage=(image,original,preset,ready)=>{image.dataset.mediaOriginal=original;image.src=ready??(original+'?tr='+(preset==='preview'?'w-1920,h-1920,c-at_max,q-95,f-auto':'w-1280,h-1800,c-at_max,q-92,f-auto'));};"+
+    "const setMediaImage=(image,original,preset,ready)=>{image.dataset.mediaOriginal=original;image.src=ready??(preset==='preview'?original:original+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');};"+
     "const preloadMediaImage=(original,preset)=>window.testGalleryLoad?window.testGalleryLoad(original,preset):Promise.resolve(original+'?tr=w-1280,h-1800,c-at_max,q-92,f-auto');")
   .replace('export function initializeDressGalleries()', 'function initializeDressGalleries()')
   + '\nwindow.testInitializeDressGalleries = initializeDressGalleries;';
@@ -95,7 +95,7 @@ try {
   await image.click();
   await modal.waitFor({state:'visible'});
   assert.equal(await preview.getAttribute('alt'),photos[1].alt);
-  assert.equal(await preview.getAttribute('src'),photos[1].url+'?tr=w-1920,h-1920,c-at_max,q-95,f-auto');
+  assert.equal(await preview.getAttribute('src'),photos[1].url);
   assert.equal(await current(),1,'opening a photo must not change gallery index');
   await modal.locator('[data-dress-preview-close]').click();
   await modal.waitFor({state:'hidden'});

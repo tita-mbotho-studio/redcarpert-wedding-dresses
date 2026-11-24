@@ -30,7 +30,7 @@ export function buildImageCachePlan({
     for(const delivered of new Set(urls)){
       const transformed = validateImageKitSource(delivered);
       const tr=transformed.searchParams.get('tr')||'';
-      const safe=/^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/.test(tr) ||
+      const safe=((preset==='hero'||preset==='preview') && delivered===source) || /^w-\d+,h-\d+,c-at_max,q-\d+,f-auto$/.test(tr) ||
         (preset==='tile' && /^w-(\d+),h-\1,c-maintain_ratio,fo-center,q-\d+,f-auto$/.test(tr)) ||
         (preset==='card' && /^w-\d+,q-\d+,f-auto$/.test(tr));
       if(original.pathname!==transformed.pathname || !safe ||
@@ -100,10 +100,11 @@ export async function warmImageCachePlan(plan, {
   async function worker() {
     while (cursor < plan.requests.length) {
       const index=cursor++, item=plan.requests[index];
-      let bytes=0, status='optimized';
+      let bytes=0, status=item.url===item.source?'original':'optimized';
       try {
-        bytes=await downloadImage(item.url,{fetchImpl,timeoutMs,maxBytes});
+        bytes=item.url===item.source?await checkOriginal(item.source):await downloadImage(item.url,{fetchImpl,timeoutMs,maxBytes});
       } catch (optimizedError) {
+        if(item.url===item.source)throw new Error('Cannot deploy: '+item.sections.join(',')+' original photo unavailable: '+item.source+'; '+String(optimizedError));
         try {
           bytes=await checkOriginal(item.source);
           status='original-fallback';
@@ -120,6 +121,7 @@ export async function warmImageCachePlan(plan, {
   return {
     requests:results.length, optimized:results.filter(x=>x.status==='optimized').length,
     originalFallbacks:results.filter(x=>x.status==='original-fallback').length,
+    originals:results.filter(x=>x.status==='original').length,
     downloadedBytes:results.reduce((n,x)=>n+x.bytes,0),
     results,
   };

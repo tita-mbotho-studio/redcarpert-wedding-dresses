@@ -14,15 +14,17 @@ test('one shared ImageKit policy covers future tiles, dress cards, details, moda
   tile:'w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto',
   card:'w-740,q-90,f-auto',
   detail:'w-1280,h-1800,c-at_max,q-92,f-auto',
-  preview:'w-1920,h-1920,c-at_max,q-95,f-auto',
   lookbook:'w-1200,h-1600,c-at_max,q-92,f-auto',
   team:'w-900,h-1200,c-at_max,q-90,f-auto',
-  hero:'w-2000,h-2000,c-at_max,q-92,f-auto',
  };
  for(const [preset, transform] of Object.entries(expected)){
   assert.equal(mediaDeliveryUrl(imagekit,preset),imagekit+'?tr='+transform);
   assert.equal(mediaDeliveryUrl(imagekit+'?updatedAt=42',preset),
    imagekit+'?updatedAt=42&tr='+transform);
+ }
+ for(const preset of ['hero','preview']){
+  assert.equal(mediaDeliveryUrl(imagekit,preset),imagekit);
+  assert.equal(mediaDeliveryUrl(imagekit+'?updatedAt=42',preset),imagekit+'?updatedAt=42');
  }
  assert.equal(mediaDeliveryUrl(imagekit+'?tr=w-300', 'card'),imagekit+'?tr=w-300');
  assert.equal(mediaDeliveryUrl('https://example.com/picture.jpg','card'),

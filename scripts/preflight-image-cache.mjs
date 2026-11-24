@@ -23,14 +23,15 @@ const fingerprint=createHash('sha256')
 const report={
   fingerprint,
   uniqueClientImageSources:plan.uniqueSources,
-  optimizedVariants:plan.requests.length,
+  optimizedVariants:plan.requests.filter(item=>item.url!==item.source).length,
+  originalRequests:plan.requests.filter(item=>item.url===item.source).length,
   unversionedSources:plan.unversioned.length,
   unversionedExamples:plan.unversioned.slice(0,5),
   mode:args.has('--warm')?'warm':'audit-only',
 };
 console.log('[ImageKit] '+report.uniqueClientImageSources+
   ' unique source images, '+report.optimizedVariants+
-  ' responsive derivatives, '+report.unversionedSources+' unversioned source URLs.');
+  ' responsive derivatives, '+report.originalRequests+' original-only requests, '+report.unversionedSources+' unversioned source URLs.');
 if (report.unversionedSources>0)
   console.warn('[ImageKit] Replacing image content at an unchanged URL can leave CDN/browser caches stale. '+
     'When a client image changes, update its manifest URL with ImageKit updatedAt.');
@@ -38,6 +39,7 @@ if (args.has('--warm')) {
   const warm=await warmImageCachePlan(plan);
   Object.assign(report,{
     warmedVariants:warm.optimized,
+    verifiedOriginals:warm.originals,
     originalFallbacks:warm.originalFallbacks,
     downloadedBytes:warm.downloadedBytes,
   });

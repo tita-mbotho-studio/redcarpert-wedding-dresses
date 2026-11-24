@@ -29,6 +29,8 @@ const cardSizes = "(max-width: 640px) 46vw, (max-width: 1000px) 31vw, (max-width
 const relatedSizes = "(max-width: 1000px) 46vw, (max-width: 1200px) 23vw, 300px";
 
 export function mediaDeliveryUrl(source: string, preset: MediaImagePreset, width?: number): string {
+  // The homepage and intentional enlargement always use original files.
+  if (preset === "hero" || preset === "preview") return source;
   if (typeof source !== "string" || !source.startsWith("https://")) return source;
   let url: URL;
   try { url = new URL(source); }

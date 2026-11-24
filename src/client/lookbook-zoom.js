@@ -56,7 +56,7 @@ export function initializeLookbookZoom(viewer, book, getPageFlip) {
     original = image.dataset.bookZoomOriginal || image.getAttribute('data-media-original') || image.currentSrc;
     triedOriginal = false;
     fullPhoto.alt = image.alt || 'Wedding dress photograph';
-    fullPhoto.src = image.dataset.bookZoomSrc || original;
+    fullPhoto.src = original;
     dialog.showModal();
     close.focus({preventScroll:true});
   };

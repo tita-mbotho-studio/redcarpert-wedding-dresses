@@ -13,7 +13,7 @@ test('ImageKit square tiles match CSS center crop; previews preserve the whole o
   const thumbnail = weddingMomentDeliveryImage(photo, 'tile');
   const preview = weddingMomentDeliveryImage(photo, 'preview');
   assert.equal(thumbnail, photo + '?tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto');
-  assert.equal(preview, photo + '?tr=w-1920,h-1920,c-at_max,q-95,f-auto');
+  assert.equal(preview, photo);
   assert.equal(weddingMomentDeliveryImage(videoPoster,'tile'),
     videoPoster + '?tr=w-640,h-640,c-maintain_ratio,fo-center,q-90,f-auto');
   assert.equal(weddingMomentDeliveryImage(photo + '?updatedAt=42','tile'),

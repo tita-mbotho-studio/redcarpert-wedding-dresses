@@ -15,6 +15,10 @@ const safeImage = (source,preset) => {
     'unexpected remote image host: '+original.hostname);
   assert.equal(target.hostname,original.hostname);
   assert.equal(target.pathname,original.pathname,'optimization must preserve the source asset');
+  if(preset==='hero'||preset==='preview'){
+    assert.equal(target.toString(),source,'original-only context must never transform the uploaded URL');
+    return source;
+  }
   if(original.hostname==='ik.imagekit.io'){
     assert(target.searchParams.has('tr'),'ImageKit transform missing for '+source);
     const tr=target.searchParams.get('tr');

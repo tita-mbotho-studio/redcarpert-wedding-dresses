@@ -74,8 +74,7 @@ export function initializeDressGalleries() {
       pointerOpened = viaPointer;
       dialog.classList.toggle('redcarpert-dress-pointer-opened', viaPointer);
       preview.alt = photo.alt;
-      // Reuse the shared on-demand high-resolution delivery, with central
-      // original-URL fallback if a CDN derivative cannot be loaded.
+      // The preview preset requests the original only on enlargement.
       setMediaImage(preview, photo.url, 'preview');
       dialog.showModal();
       close.focus({preventScroll:true});
