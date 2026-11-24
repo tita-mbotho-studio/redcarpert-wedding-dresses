@@ -1,0 +1,36 @@
+name: TEMP Implementation 73 independent Pages verification
+# One-time verification only; never deploy from this workflow.
+on:
+  push:
+    branches:
+      - implementation/73-independent-repository-pages-base
+    paths:
+      - .github/workflows/temp-implementation-73-verify.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: >-
+      github.ref == 'refs/heads/implementation/73-independent-repository-pages-base' &&
+      github.event.head_commit.message == 'verify: implementation 73 standalone Pages base'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:dist
+      - name: Test production pages in Chromium
+        run: |
+          npm run preview -- --port 4173 > /tmp/pages-preview.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid"' EXIT
+          curl --fail --retry 10 --retry-delay 1 --retry-connrefused http://localhost:4173/redcarpert-wedding-dresses-main/ > /dev/null
+          npm run test:browser
