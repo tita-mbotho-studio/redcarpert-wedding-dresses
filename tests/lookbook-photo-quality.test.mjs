@@ -147,7 +147,7 @@ test('PDF export stages full-resolution photos as local files, not inline data U
   const srcs=[...html.matchAll(/class="portrait"><img src="([^"]+)"/g)].map(m=>m[1]);
   assert.equal(srcs.length,catalogueProducts.length);
   assert(srcs.every(src=>src.startsWith('file:')&&!src.includes('base64')));
-  assert.equal(srcs[0],pathToFileURL(join(folder,'photo-0.png')).href);
+  assert.deepEqual(new Set(srcs),new Set(images.map((_,index)=>pathToFileURL(join(folder,'photo-'+index+'.png')).href)));
   assert.deepEqual(await readFile(join(folder,'photo-0.png')),png);
   assert.deepEqual(await readFile(join(folder,'photo-'+(images.length-1)+'.png')),png);
   assert(html.length<200000,'HTML should stay small regardless of image payload size');
