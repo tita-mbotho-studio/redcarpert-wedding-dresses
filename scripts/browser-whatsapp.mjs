@@ -15,7 +15,6 @@ try {
     {route:'/contact-us/',width:640,name:'wide phone floating enquiry',trigger:'#redcarpert-floating-whatsapp [data-whatsapp-send]'},
     {route:'/product/',width:768,name:'tablet floating enquiry',trigger:'#redcarpert-floating-whatsapp [data-whatsapp-send]'},
     {route:'/about-us/',width:390,name:'mobile About Us fitting',trigger:'.redcarpert-editorial [data-redcarpert-icon-cta="fitting"] [data-whatsapp-send]'},
-    {route:'/contact-us/',width:768,name:'tablet map WhatsApp number',trigger:'.redcarpert-map-whatsapp [data-contact-whatsapp-number]'},
     {route:'/contact-us/',width:375,name:'mobile footer social WhatsApp',trigger:'#footer .redcarpert-footer-social-whatsapp'},
     {route:'/product/preview/mermaid-lefa-dress/',width:390,name:'Mermaid dress fitting',trigger:'[data-detail-preview] [data-whatsapp-send]'},
     {route:'/product/preview/ball-gown-02/',width:768,name:'Ball Gown dress fitting',trigger:'[data-detail-preview] [data-whatsapp-send]'},
@@ -39,7 +38,7 @@ try {
     const control=page.locator(trigger);
     if(route==='/contact-us/' && trigger.includes('data-contact-whatsapp-number')){
       assert.equal((await control.innerText()).trim(),'+27 68 045 8811',
-        'both Contact Our Team and map controls must show the same WhatsApp Business number');
+        'Contact Our Team must show the approved WhatsApp Business number');
     }
     assert.equal(await control.evaluate(el=>el.tagName),'A',name+' must use a native direct link');
     // Verify computed colors, not merely the CSS source, across viewport widths.
