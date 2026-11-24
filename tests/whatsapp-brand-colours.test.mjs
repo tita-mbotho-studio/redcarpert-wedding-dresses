@@ -17,8 +17,10 @@ test('WhatsApp controls outside the footer use the original green-and-white styl
     'a.button.redcarpert-icon-cta-button[data-whatsapp-send]',
     'a.button.redcarpert-detail-fitting-button[data-whatsapp-send]',
     'a.redcarpert-contact-number[data-whatsapp-send]',
-    'a.redcarpert-contact-chat[data-whatsapp-send]',
   ])assert(css.includes(selector),'WhatsApp brand rule missing for '+selector);
+  assert(!css.includes('.redcarpert-contact-chat'),'obsolete duplicate Contact Us button styles must be removed');
+  assert(!css.includes('.redcarpert-contact-call'),
+    'the map Call Us button must not inherit WhatsApp green styling');
   assert(!css.includes('#footer') && !css.includes('.redcarpert-footer-'),
     'WhatsApp brand stylesheet must never override footer colors');
   assert.match(modernIcons,

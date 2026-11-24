@@ -1,6 +1,6 @@
 import type { DocumentElement, DocumentNode, SiteDocumentData } from "@/types/site";
 import imageLinks from "../data/image-links.json" with { type: "json" };
-import { WHATSAPP_DISPLAY_NUMBER, buildWhatsAppUrl } from "../config/whatsapp.ts";
+import { WHATSAPP_DISPLAY_NUMBER, WHATSAPP_NUMBER, buildWhatsAppUrl } from "../config/whatsapp.ts";
 import { generalFittingMessage } from "./whatsapp-messages.ts";
 import { weddingMomentEvents, flattenWeddingMomentEvents, renderWeddingMomentGallery } from "./wedding-moments.ts";
 
@@ -28,6 +28,23 @@ const fitting = (label = "Book a Fitting") => node("div", {
   }, [node("i", { class: "fa-brands fa-whatsapp", "aria-hidden": "true" }, [])]),
 ]);
 
+const contactWhatsAppNumber = () => node("a", {
+  class: "redcarpert-contact-number",
+  "data-contact-whatsapp-number": "",
+  href: buildWhatsAppUrl(generalFittingMessage()),
+  target: "_blank",
+  rel: "noopener noreferrer",
+  "aria-label": "WhatsApp Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
+}, [node("i", { class: "fa-brands fa-whatsapp", "aria-hidden": "true" }, []), WHATSAPP_DISPLAY_NUMBER]);
+
+/** Map-location action: native phone dialler, independent of WhatsApp. */
+const contactPhoneCall = () => node("a", {
+  class: "redcarpert-contact-call",
+  "data-contact-phone-call": "",
+  href: "tel:+" + WHATSAPP_NUMBER,
+  "aria-label": "Call Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
+}, [node("i", { class: "fa-solid fa-phone", "aria-hidden": "true" }, []), "Call Us: " + WHATSAPP_DISPLAY_NUMBER]);
+
 function editorialContent(route: EditorialRoute): DocumentNode[] {
   if (route === "/digital-lookbook") return [
     node("section", { class: "redcarpert-editorial-hero", "aria-labelledby": "redcarpert-lookbook-title" }, [
@@ -46,8 +63,16 @@ function editorialContent(route: EditorialRoute): DocumentNode[] {
     ];
   }
   if (route === "/about-us") return [
+    node("section", { class: "redcarpert-editorial-story", "aria-labelledby": "redcarpert-story-intro-title" }, [
+      node("h2", { id: "redcarpert-story-intro-title" }, ["Welcome to Redcarpert Wedding Dresses"]),
+      p("At Redcarpert Wedding Dresses, we believe every bride deserves to look and feel exceptional on her wedding day. We specialise in luxurious bridal wear, celebrating love, individuality and elegance."),
+      p("Our collection features a beautiful range of white wedding gowns and modern traditional wedding gowns, carefully selected to cater to different bridal styles, tastes and cultural preferences."),
+      p("Whether you envision yourself in a breathtaking white wedding gown or a beautifully designed modern traditional outfit, we are here to help you find a look that reflects your personality and brings your wedding-day vision to life."),
+      p("We celebrate brides of every shape and size. Our collections offer a wide range of sizes, including plus sizes, so every bride can find a gown that makes her feel beautiful, confident and comfortable."),
+      p("Your wedding day is your moment to shine, and we would be honoured to be part of your journey."),
+      node("p", { class: "redcarpert-editorial-story-signoff" }, ["Redcarpert Wedding Dresses – Where Every Bride Finds Her Moment to Shine."]),
+    ]),
     node("section", { class: "redcarpert-editorial-hero", "aria-labelledby": "redcarpert-story-title" }, [
-      node("p", { class: "redcarpert-editorial-eyebrow" }, ["OUR STORY"]),
       node("h2", { id: "redcarpert-story-title" }, ["Your Dream Dress Starts Here"]),
       node("p", { class: "redcarpert-editorial-lead" }, ["Find a dress that feels like you."]),
       p("Browse our wedding dress collections, find styles you love and message us on WhatsApp to ask about a dress or book a fitting."),
@@ -100,18 +125,7 @@ function editorialContent(route: EditorialRoute): DocumentNode[] {
         node("p", { class: "redcarpert-contact-card-label" }, ["REDCARPERT WEDDING DRESSES"]),
         node("p", { class: "redcarpert-contact-card-heading" }, ["Contact Our Team"]),
         node("p", { class: "redcarpert-contact-card-helper" }, ["For wedding dress enquiries and fitting appointments"]),
-        node("a", {
-          class: "redcarpert-contact-number", "data-contact-whatsapp-number": "",
-          href: buildWhatsAppUrl(generalFittingMessage()),
-          target: "_blank", rel: "noopener noreferrer",
-          "aria-label": "WhatsApp Redcarpert Wedding Dresses on " + WHATSAPP_DISPLAY_NUMBER,
-        }, [node("i", { class: "fa-brands fa-whatsapp", "aria-hidden": "true" }, []), WHATSAPP_DISPLAY_NUMBER]),
-        node("a", {
-          class: "redcarpert-contact-chat", "data-contact-whatsapp-action": "",
-          href: buildWhatsAppUrl(generalFittingMessage()),
-          target: "_blank", rel: "noopener noreferrer",
-          "aria-label": "Chat with Redcarpert Wedding Dresses on WhatsApp",
-        }, [node("i", { class: "fa-brands fa-whatsapp", "aria-hidden": "true" }, []), "Chat on WhatsApp"]),
+        contactWhatsAppNumber(),
       ]),
     ]),
     node("section", { class: "redcarpert-editorial-panel", "aria-labelledby": "redcarpert-enquiry-steps" }, [
@@ -133,6 +147,7 @@ function editorialContent(route: EditorialRoute): DocumentNode[] {
       h("Our Location", "redcarpert-map-title"),
       node("p", { class: "redcarpert-editorial-lead" }, ["Pomona · Kempton Park · Gauteng"]),
       p("We're in Pomona, Kempton Park. This map shows the general area."),
+      node("div", { class: "redcarpert-map-call", "aria-label": "Call Redcarpert Wedding Dresses" }, [contactPhoneCall()]),
       node("div", { class: "redcarpert-editorial-map" }, [
         node("iframe", {
           title: "Map of the Pomona area in Kempton Park, Gauteng, South Africa",

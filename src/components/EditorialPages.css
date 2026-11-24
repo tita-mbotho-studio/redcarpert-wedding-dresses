@@ -862,6 +862,60 @@
   }
 }
 
+/* Client-approved Our Story copy; the existing "Your Dream Dress Starts Here"
+ * introduction and all subsequent About Us sections retain their own styles. */
+#main-container .redcarpert-editorial[data-editorial-route="/about-us"] .redcarpert-editorial-story {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto clamp(32px, 5vw, 64px);
+  padding: clamp(14px, 2.5vw, 28px) clamp(8px, 2.5vw, 24px);
+  text-align: center;
+}
+#main-container .redcarpert-editorial-story h2 {
+  max-width: 780px;
+  margin: 0 auto clamp(18px, 3vw, 28px);
+  color: #b99564;
+  font: 400 clamp(23px, 3.5vw, 38px)/1.25 Montserrat, sans-serif;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+#main-container .redcarpert-editorial-story p {
+  max-width: 760px;
+  margin: 0 auto clamp(14px, 2vw, 22px);
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.85;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+#main-container .redcarpert-editorial-story p.redcarpert-editorial-story-signoff {
+  margin-top: clamp(20px, 3vw, 32px);
+  color: #67503b;
+  font-weight: 600;
+}
+
+/* Contact Us text scales without touching About Us sections below Your Dream. */
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] {
+  font-size: clamp(14px, 1.4vw, 16px);
+  text-align: center;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card-label {
+  font-size: clamp(10px, 1vw, 12px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card-helper {
+  font-size: clamp(12px, 1.2vw, 14px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps strong {
+  font-size: clamp(14px, 1.4vw, 16px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps p,
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-map-link {
+  font-size: clamp(12px, 1.2vw, 14px);
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-editorial-steps li {
+  text-align: center;
+}
+
 /* Client review — one fluid contact card on phones, tablets and desktops. */
 #main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-contact-card {
   box-sizing: border-box;
@@ -907,49 +961,67 @@
   align-items: center;
   justify-content: center;
   gap: clamp(6px, 1.5vw, 10px);
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
   min-width: 0;
-  min-height: 50px;
-  padding: 10px 12px;
+  min-height: 46px;
+  padding: clamp(10px, 1.5vw, 12px) clamp(14px, 2vw, 20px);
   border: 1px solid #e3d7c8;
   background: #fff;
   color: #574634;
-  font: 600 clamp(17px, 3vw, 22px)/1.4 Montserrat, sans-serif;
+  font: 600 clamp(15px, 1.8vw, 19px)/1.4 Montserrat, sans-serif;
+  text-align: center;
   text-decoration: none;
   white-space: normal;
   overflow-wrap: anywhere;
 }
-#main-container .redcarpert-editorial a.redcarpert-contact-chat {
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-map-call {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 8px auto clamp(18px, 3vw, 26px);
+  text-align: center;
+}
+/* Map telephone contact is a plain text link, not a button. */
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
-  min-width: 0;
-  min-height: 46px;
-  padding: 10px 14px;
-  border: 1px solid #9b7a51;
-  background: #9b7a51;
-  color: #fff;
-  font: 600 13px/1.5 Montserrat, sans-serif;
-  text-decoration: none;
-  white-space: normal;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  flex-wrap: wrap;
   overflow-wrap: anywhere;
+  color: #574634;
+  font: 600 clamp(14px, 1.6vw, 17px)/1.4 Montserrat, sans-serif;
+  text-align: center;
+  text-decoration: none;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call .fa-phone {
+  color: inherit;
+  font-size: 0.95em;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:hover,
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:focus-visible {
+  background: transparent;
+  color: #574634;
+  text-decoration: underline;
 }
 #main-container .redcarpert-editorial a.redcarpert-contact-number:hover,
 #main-container .redcarpert-editorial a.redcarpert-contact-number:focus-visible {
   border-color: #9b7a51;
   background: #f5efe7;
 }
-#main-container .redcarpert-editorial a.redcarpert-contact-chat:hover,
-#main-container .redcarpert-editorial a.redcarpert-contact-chat:focus-visible {
-  background: #806241;
-  color: #fff;
-}
-#main-container .redcarpert-editorial .redcarpert-contact-card a:focus-visible {
+#main-container .redcarpert-editorial .redcarpert-contact-card a:focus-visible,
+#main-container .redcarpert-editorial .redcarpert-map-call a:focus-visible {
   outline: 2px solid #9b7a51;
   outline-offset: 3px;
 }

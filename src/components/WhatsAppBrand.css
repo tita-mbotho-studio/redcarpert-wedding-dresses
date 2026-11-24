@@ -47,25 +47,22 @@
   outline-offset: 3px;
 }
 
-/* Contact Us: both clickable number and chat button use the original green
- * and white, with no green-on-black or dark-green icon variants. */
-#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send],
-#main-container .redcarpert-editorial a.redcarpert-contact-chat[data-whatsapp-send] {
+/* Contact Our Team retains the WhatsApp green/white palette.
+ * The map telephone action is neutral and is not targeted by these rules. */
+#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send] {
   background: var(--redcarpert-whatsapp-green) !important;
   border-color: var(--redcarpert-whatsapp-border) !important;
   color: var(--redcarpert-whatsapp-white) !important;
 }
-#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send] .fa-whatsapp,
-#main-container .redcarpert-editorial a.redcarpert-contact-chat[data-whatsapp-send] .fa-whatsapp {
+#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send] .fa-whatsapp {
   color: var(--redcarpert-whatsapp-white) !important;
 }
-#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send]:hover,
-#main-container .redcarpert-editorial a.redcarpert-contact-chat[data-whatsapp-send]:hover {
+#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send]:hover {
   background: var(--redcarpert-whatsapp-hover) !important;
   border-color: var(--redcarpert-whatsapp-border) !important;
   color: var(--redcarpert-whatsapp-white) !important;
 }
-#main-container .redcarpert-editorial .redcarpert-contact-card a[data-whatsapp-send]:focus-visible {
+#main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send]:focus-visible {
   outline: 2px solid var(--redcarpert-whatsapp-border);
   outline-offset: 3px;
 }

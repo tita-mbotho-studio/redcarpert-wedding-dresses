@@ -22,12 +22,20 @@ test('every approved page converts all on-site enquiry previews to native WhatsA
     const oldControls=all(document.nodes).filter(node=>Object.hasOwn(node.attrs,'data-whatsapp-preview'));
     const direct=all(updated.nodes).filter(node=>Object.hasOwn(node.attrs,'data-whatsapp-send'));
     assert(oldControls.length>=3,route+' must have at least footer, social and floating CTAs');
-    assert.equal(direct.length,oldControls.length+(route==='/contact-us'?2:0),
-      route+' must convert every enquiry control, including both visible Contact Us links');
+    assert.equal(direct.length,oldControls.length+(route==='/contact-us'?1:0),
+      route+' must convert WhatsApp enquiries without converting the map telephone action');
     assert.equal(all(updated.nodes).filter(node=>Object.hasOwn(node.attrs,'data-whatsapp-preview')).length,0);
     if(route==='/contact-us'){
       assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-number')).length,1);
-      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-action')).length,1);
+      assert.equal(direct.filter(node=>Object.hasOwn(node.attrs,'data-contact-whatsapp-action')).length,0);
+      const calls=all(updated.nodes).filter(node=>Object.hasOwn(node.attrs,'data-contact-phone-call'));
+      assert.equal(calls.length,1,'map Call Us must remain a native telephone link');
+      assert.equal(calls[0].attrs.href,'tel:+27680458811');
+      assert.equal(calls[0].attrs.target,undefined);
+      assert.equal(calls[0].attrs['data-whatsapp-send'],undefined);
+      assert.deepEqual(calls[0].children,[
+        {tag:'i',attrs:{class:'fa-solid fa-phone','aria-hidden':'true'},children:[]},'Call Us: +27 68 045 8811',
+      ]);
     }
     for(const control of direct){
       assert.equal(control.tag,'a');
