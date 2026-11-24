@@ -975,7 +975,7 @@
   white-space: normal;
   overflow-wrap: anywhere;
 }
-#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-map-whatsapp {
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] .redcarpert-map-call {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -983,13 +983,43 @@
   margin: 8px auto clamp(18px, 3vw, 26px);
   text-align: center;
 }
+/* Map Call Us uses a distinct neutral luxury style, not WhatsApp green. */
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 46px;
+  padding: 11px 24px;
+  border: 1px solid #b99564;
+  border-radius: 4px;
+  background: #f5efe7;
+  color: #574634;
+  font: 600 clamp(14px, 1.6vw, 17px)/1.4 Montserrat, sans-serif;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call .fa-phone {
+  color: inherit;
+  font-size: 0.95em;
+}
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:hover,
+#main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:focus-visible {
+  border-color: #9b7a51;
+  background: #e8ddce;
+  color: #574634;
+}
 #main-container .redcarpert-editorial a.redcarpert-contact-number:hover,
 #main-container .redcarpert-editorial a.redcarpert-contact-number:focus-visible {
   border-color: #9b7a51;
   background: #f5efe7;
 }
 #main-container .redcarpert-editorial .redcarpert-contact-card a:focus-visible,
-#main-container .redcarpert-editorial .redcarpert-map-whatsapp a:focus-visible {
+#main-container .redcarpert-editorial .redcarpert-map-call a:focus-visible {
   outline: 2px solid #9b7a51;
   outline-offset: 3px;
 }
