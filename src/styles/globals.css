@@ -7,4 +7,16 @@
   --muted: #b3b3b1;
   --border: #eeeeee;
   --brand-gold: #e9c95d;
+
+  /* Shared component spacing: small steps for related content, larger steps for separate groups. */
+  --redcarpert-space-2: 2px;
+  --redcarpert-space-4: 4px;
+  --redcarpert-space-6: 6px;
+  --redcarpert-space-8: 8px;
+  --redcarpert-space-12: 12px;
+  --redcarpert-space-16: 16px;
+  --redcarpert-space-20: 20px;
+  --redcarpert-space-24: 24px;
+  --redcarpert-space-32: 32px;
+  --redcarpert-space-48: 48px;
 }
