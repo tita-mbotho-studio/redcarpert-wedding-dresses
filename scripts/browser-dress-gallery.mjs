@@ -270,6 +270,8 @@ try {
      id:card.getAttribute('data-related-dress'),
      sale:card.querySelector('[data-related-sale-price]')?.textContent?.trim(),
      rental:card.querySelector('[data-related-rental-price]')?.textContent?.trim(),
+     nameColor:getComputedStyle(card.querySelector('.redcarpert-related-name')).color,
+     numericVariant:getComputedStyle(card.querySelector('.redcarpert-related-price-value')).fontVariantNumeric,
      labels:[...card.querySelectorAll('.redcarpert-related-price-label')]
        .map(label=>label.textContent.trim()),
    })));
@@ -278,6 +280,8 @@ try {
      assert.equal(entry.rental,displayRentalPriceForDress(entry.id),width+'px related rental mismatch');
      assert.equal(entry.labels.length,2,width+'px related dress needs both price labels');
      assert.equal(entry.labels[1],'Rental Price Range');
+     assert.equal(entry.nameColor,'rgb(37, 37, 37)',width+'px related dress name contrast');
+     assert(entry.numericVariant.includes('tabular-nums'),width+'px related prices use consistent numerals');
    }
    assert.equal(relatedLayout.columns,width>1000?4:2,width+'px related cards must use the intended responsive columns');
    // Four related dresses fill complete two-column rows on mobile.

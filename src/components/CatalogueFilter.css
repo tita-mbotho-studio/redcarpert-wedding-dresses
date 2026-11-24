@@ -23,7 +23,8 @@
 .redcarpert-catalogue-filter button:focus-visible {outline:2px solid var(--redcarpert-control-focus);outline-offset:3px;}
 .redcarpert-catalogue-filter button:active {box-shadow:inset 0 0 0 1px currentColor;}
 .redcarpert-catalogue-filter .redcarpert-filter-status {
-  flex:0 0 100%;text-align:center;margin:0;font:400 11px/1.5 "Open Sans",sans-serif;color:#93877d;
+  flex:0 0 100%;text-align:center;margin:0;font:400 11px/1.5 "Open Sans",sans-serif;color:var(--redcarpert-text-secondary);
+  font-variant-numeric:tabular-nums;
 }
 .woocommerce ul.products[data-catalogue-preview] > li.redcarpert-filtered-out,
 .woocommerce-page ul.products[data-catalogue-preview] > li.redcarpert-filtered-out {display:none!important;}

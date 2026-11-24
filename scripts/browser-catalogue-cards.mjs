@@ -39,6 +39,8 @@ try {
             hiddenRule: divider.getAttribute('aria-hidden'),
             childClasses: [...title.children].map(c => c.className),
             titleAlignment: getComputedStyle(title).textAlign,
+            titleFlexGrow: getComputedStyle(title).flexGrow,
+            imageFlexShrink: getComputedStyle(img).flexShrink,
             collectionFont: getComputedStyle(collection).fontFamily,
             numberFont: getComputedStyle(number).fontFamily,
             cardRect: rect(card), imageRect: rect(img), titleRect: rect(title),
@@ -69,6 +71,8 @@ try {
            assert(card.link?.endsWith(expectedRoute + '/'), product.id + ' must link to its displayed category');
           assert.equal(card.label,product.name+': view dress photographs');
           assert.equal(card.titleAlignment, 'center');
+          assert.equal(card.titleFlexGrow, '1', width+'px '+product.id+' caption fills remaining card height');
+          assert.equal(card.imageFlexShrink, '0', width+'px '+product.id+' photo cannot shrink to fit caption');
           assert.match(card.collectionFont, /Cormorant Garamond/);
           assert.match(card.numberFont, /Montserrat/);
           assert(card.collectionRect.bottom <= card.dividerRect.top + 1,
