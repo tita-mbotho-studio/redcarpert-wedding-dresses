@@ -20,8 +20,34 @@ try{
     return [...document.querySelectorAll(selectors)].filter(el=>visible(el)&&el.textContent.trim()&&getComputedStyle(el).textAlign!=='center').map(el=>({text:el.textContent.trim().slice(0,100),alignment:getComputedStyle(el).textAlign}));
    });
    assert.deepEqual(issues,[],width+'px '+route);
+   const footerAlignment=await page.locator('#footer .redcarpert-footer-columns > .col').evaluateAll(columns=>columns.flatMap(column=>{
+    const frame=column.getBoundingClientRect();
+    const center=(frame.left+frame.right)/2;
+    return [...column.querySelectorAll('.redcarpert-footer-heading,.redcarpert-footer-items a')].flatMap(el=>{
+     const range=document.createRange();
+     range.selectNodeContents(el);
+     const rects=[...range.getClientRects()].filter(rect=>rect.width>0&&rect.height>0);
+     if(!rects.length)return [];
+     // Group glyphs and wrapped text by rendered line, not by individual span.
+     const lines=[];
+     for(const rect of rects){
+      const row=lines.find(line=>Math.abs(line.y-rect.y)<3);
+      if(row){row.left=Math.min(row.left,rect.left);row.right=Math.max(row.right,rect.right);}
+      else lines.push({y:rect.y,left:rect.left,right:rect.right});
+     }
+     // The fitting link is an icon/text flex group; test the group box itself.
+     if(el.classList.contains('redcarpert-footer-book')){
+      const box=el.getBoundingClientRect();
+      return Math.abs((box.left+box.right)/2-center)>3?[el.textContent.trim()]:[];
+     }
+     return lines.some(line=>Math.abs((line.left+line.right)/2-center)>3)?[el.textContent.trim()]:[];
+    });
+   }));
+   assert.deepEqual(footerAlignment,[],width+'px '+route+' footer wording must center within its own column');
    if(route==='/'&&width<=1000){
-    await page.locator('#header .mobile-nav').click();
+    const toggle=page.locator('#header .mobile-nav[aria-expanded="false"]');
+    await toggle.waitFor({state:'visible'});
+    await toggle.click();
     const mobile=page.locator('#header .mob-nav-menu');
     await mobile.waitFor({state:'visible'});
     const links=await mobile.locator('a').evaluateAll(els=>els.map(el=>getComputedStyle(el).textAlign));
