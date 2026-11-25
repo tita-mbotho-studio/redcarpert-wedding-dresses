@@ -72,6 +72,14 @@ try {
   // Accessible names remain for screen readers; visible labels are icons only.
   assert.equal(await previous.textContent(),'','previous control must have no visible text');
   assert.equal(await next.textContent(),'','next control must have no visible text');
+  // Check the rendered shared web/PDF link and category ink, independently
+  // of the current visible leaf (the other book pages remain mounted).
+  const bookInk=await page.locator('.redcarpert-book-dress[data-book-category=modern_tradition]').first().evaluate(dress=>({
+    kind:getComputedStyle(dress.querySelector('.redcarpert-book-kicker')).color,
+    link:getComputedStyle(dress.querySelector('a[href*="/product/preview/"]')).color,
+  }));
+  assert.equal(bookInk.kind,'rgb(99, 99, 99)',width+'px book category contrast');
+  assert.equal(bookInk.link,'rgb(141, 104, 69)',width+'px book detail link ink');
   assert.equal(await previous.locator('.fa-solid.fa-chevron-left').count(),1);
   assert.equal(await next.locator('.fa-solid.fa-chevron-right').count(),1);
   assert(await previous.isDisabled(),'previous arrow must be disabled on the cover');

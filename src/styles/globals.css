@@ -27,6 +27,15 @@
   --redcarpert-control-focus-dark: #fff;
   --redcarpert-control-duration: 180ms;
 
+  /* Implementation 86: text on the existing dark header/footer and
+   * readable links on the existing ivory lookbook paper. */
+  --redcarpert-dark-heading: #f7f7f7;
+  --redcarpert-dark-text: #c7c7c7;
+  --redcarpert-dark-icon: #f1f1f1;
+  --redcarpert-dark-link-hover: #fff;
+  --redcarpert-dark-accent: #e1b77e;
+  --redcarpert-editorial-link: #8d6845;
+
   /* Implementation 85: restrained elevation and existing warm surfaces.
    * Flat content needs no shadow. Reserve raised/floating elevation for
    * a clear change in visual priority. */

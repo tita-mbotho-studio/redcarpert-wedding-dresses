@@ -520,7 +520,7 @@ body .redcarpert-dress-photo-dialog.redcarpert-dress-pointer-opened
   box-shadow: var(--redcarpert-shadow-control-hover);
 }
 #main-container [data-detail-preview] .redcarpert-detail-actions > a.button.redcarpert-detail-fitting-button:focus-visible {
-  outline: 2px solid #947b5c !important;
+  outline: 2px solid var(--redcarpert-control-focus) !important;
   outline-offset: 3px;
 }
 #main-container [data-detail-preview] .redcarpert-detail-enquiry-note {

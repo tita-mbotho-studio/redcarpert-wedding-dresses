@@ -267,7 +267,7 @@ body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.bu
   box-shadow: inset 0 0 0 2px #fff;
 }
 body.redcarpert-home-native .fullpage-wrapper > .section .section-content > a.button:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--redcarpert-control-focus-dark);
   outline-offset: 4px;
 }
 body.redcarpert-home-native .fullpage-scroll-arrow {
@@ -280,7 +280,7 @@ body.redcarpert-home-native .fullpage-scroll-arrow {
   font-size: 38px;
 }
 body.redcarpert-home-native .fullpage-scroll-arrow:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--redcarpert-control-focus-dark);
   outline-offset: 4px;
 }
 body.redcarpert-home-native .fullpage-data {
