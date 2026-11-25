@@ -70,7 +70,7 @@
 }
 #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger:focus-visible,
 #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-dismiss:focus-visible {
-  outline: 2px solid #3f3a34;
+  outline: 2px solid var(--redcarpert-control-focus);
   outline-offset: 4px;
 }
 /* Resize the two separate controls without changing the green/white brand.
@@ -178,31 +178,31 @@
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-link {
   opacity: 1;
-  color: #f1f1f1;
+  color: var(--redcarpert-dark-icon);
   cursor: pointer;
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-link:hover {
-  color: #e1b77e;
+  color: var(--redcarpert-dark-accent);
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-link:focus-visible {
-  outline: 1px solid #fff;
+  outline: 2px solid var(--redcarpert-control-focus-dark);
   outline-offset: 2px;
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp {
-  color: #f1f1f1;
+  color: var(--redcarpert-dark-icon);
   cursor: pointer;
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp:hover {
-  /* Keep all footer socials neutral, including the WhatsApp hover state. */
-  color: #fff;
+  /* The footer WhatsApp icon stays neutral, not a green floating CTA. */
+  color: var(--redcarpert-dark-link-hover);
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp:focus-visible {
-  outline: 1px solid #fff;
+  outline: 2px solid var(--redcarpert-control-focus-dark);
   outline-offset: 2px;
 }
 @media (max-width: 1000px) {
@@ -329,6 +329,18 @@ body.redcarpert-home-native .fullpage-scroll-arrow .fa-chevron-down {
   font-size: .95em;
 }
 
+/* A visible current-page marker and keyboard focus on both menu variants.
+ * Decoration and an inset outline do not change link dimensions or touch targets.
+ * Preserve the captured menu's colors, dropdown behavior and active classes. */
+#header :is(.nav-menu, .mob-nav-menu) a[aria-current=page] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+#header :is(.nav-menu, .mob-nav-menu) :is(a, button):focus-visible {
+  outline: 2px solid var(--redcarpert-control-focus-dark);
+  outline-offset: -3px;
+}
+
 /* Implementation 34 — mobile dropdown matches the visible header, rather
  * than the inherited almost-black overlay. Keep the independent submenu
  * toggle at the far right; hide only the redundant chevron after the label. */
@@ -368,7 +380,7 @@ body.redcarpert-home-native .fullpage-scroll-arrow .fa-chevron-down {
     line-height: 1;
   }
   #header .mobile-nav:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--redcarpert-control-focus-dark);
     outline-offset: 2px;
   }
 

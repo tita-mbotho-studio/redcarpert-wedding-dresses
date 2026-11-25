@@ -53,7 +53,7 @@ try {
         return {
           headerLogo:box(logo),footerLogo:box(footerLogo),
           headerFont:parseFloat(getComputedStyle(nav).fontSize),
-          fontSizes:typeElements.map(e=>({className:e.className,size:parseFloat(getComputedStyle(e).fontSize)})),
+          fontSizes:typeElements.map(e=>({className:e.className,size:parseFloat(getComputedStyle(e).fontSize),color:getComputedStyle(e).color})),
           gridColumns:columns.map(box),
           textRectsByColumn:columns.map(textRects),
           taglineWhiteSpace:getComputedStyle(footer.querySelector('.redcarpert-footer-tagline')).whiteSpace,
@@ -108,6 +108,8 @@ try {
           width+'px '+route+' '+key+' must exactly track the header: '+JSON.stringify(metrics));
       }
       for(const type of metrics.fontSizes){
+        const expectedInk=String(type.className).includes('redcarpert-footer-heading')?'rgb(247, 247, 247)':'rgb(199, 199, 199)';
+        assert.equal(type.color,expectedInk,width+'px '+route+' footer text hierarchy');
         if (String(type.className).includes('copyrights')) continue;
         assert(Math.abs(type.size-metrics.headerFont)<=0.1,
           width+'px '+route+' footer '+type.className+' must retain header font-size: '+JSON.stringify(metrics));

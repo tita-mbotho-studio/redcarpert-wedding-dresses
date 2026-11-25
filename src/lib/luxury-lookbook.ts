@@ -80,7 +80,7 @@ const style = [
   ".portrait{width:100%;height:164mm;flex:0 0 164mm;background:#FDFBF8;display:flex;justify-content:center;align-items:center;border:0;padding:0}",
   ".portrait img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}",
   ".dress-bottom{display:flex;flex:1 1 0;min-height:0;flex-direction:column;justify-content:center;align-items:center;gap:2.1mm;text-align:center;padding:3mm 0 6mm}",
-  ".dress-bottom .kind{font:500 8pt/1.3 Montserrat,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#947B5C}",
+  ".dress-bottom .kind{font:500 8pt/1.3 Montserrat,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#636363}",
   ".dress-bottom h3{font:400 28pt/1.12 Georgia,serif;letter-spacing:-.015em}",
   ".price-pair{display:grid;position:relative;grid-template-columns:repeat(2,minmax(0,1fr));gap:7mm;align-items:start;width:100%;max-width:144mm;margin:1mm auto}",
   ".price-item{display:flex;flex-direction:column;align-items:center;gap:1.5mm;min-width:0}",
@@ -109,7 +109,7 @@ const style = [
   ".back p{font:400 11pt/1.8 Montserrat,Arial,sans-serif;max-width:118mm;margin:2mm 0 6mm}",
   ".back .brand-slogan{font:italic 400 18pt/1.4 Georgia,serif;color:#8D674A;max-width:138mm;margin:3mm 0}",
   ".back-links{display:flex;flex-direction:column;align-items:center;gap:5mm;margin:5mm 0}",
-  ".back-links a{font:500 10pt/1.5 Montserrat,Arial,sans-serif;color:#8A684A;text-decoration:underline;text-underline-offset:3px}",
+  ".back-links a{font:500 10pt/1.5 Montserrat,Arial,sans-serif;color:#8D6845;text-decoration:underline;text-underline-offset:3px}",
   ".back .back-notice{font:400 8pt/1.5 Montserrat,Arial,sans-serif;color:#786E63;max-width:135mm}",
   "@media screen{body{background:#E6E0D9}.page{margin:14px auto;box-shadow:0 10px 35px #0002}}"
 ].join("\n");

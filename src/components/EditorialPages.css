@@ -124,7 +124,7 @@
   text-align: center;
 }
 .redcarpert-book-kicker {
-  color: var(--book-gold);
+  color: var(--redcarpert-text-secondary);
   font: 500 clamp(8px, .8vw, 10px)/1.3 Montserrat, sans-serif;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -195,7 +195,7 @@
   overflow-wrap: break-word;
 }
 .redcarpert-editorial .redcarpert-book-copy a {
-  color: #8d6845;
+  color: var(--redcarpert-editorial-link);
   font: 500 clamp(9px, .9vw, 12px)/1.4 Montserrat, sans-serif;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -277,12 +277,12 @@
   gap: 12px;
 }
 .redcarpert-book-back-links a {
-  color: #8a684a;
+  color: var(--redcarpert-editorial-link);
   font: 500 12px Montserrat, sans-serif;
   text-transform: uppercase;
   letter-spacing: .06em;
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
 }
 .redcarpert-book-back small { font: 10px/1.4 "Open Sans", sans-serif; color: #786e63; }
 .redcarpert-book-controls {
@@ -328,6 +328,11 @@
   outline-offset: 3px;
 }
 .redcarpert-book a:focus-visible { outline: 2px solid var(--redcarpert-control-focus); outline-offset: 3px; }
+/* Match the PDF link ink; use the established red only for web interaction. */
+.redcarpert-editorial .redcarpert-book-copy a:hover,
+.redcarpert-book-back-links a:hover {
+  color: var(--redcarpert-text-accent);
+}
 .redcarpert-book-controls [data-book-status] {
   min-width: 86px;
   text-align: center;
@@ -1046,7 +1051,7 @@
 }
 #main-container .redcarpert-editorial .redcarpert-contact-card a:focus-visible,
 #main-container .redcarpert-editorial .redcarpert-map-call a:focus-visible {
-  outline: 2px solid #9b7a51;
+  outline: 2px solid var(--redcarpert-control-focus);
   outline-offset: 3px;
 }
 @media (max-width: 560px) {
@@ -1085,9 +1090,6 @@
 /* Plain telephone and map actions remain text links, not buttons. */
 #main-container .redcarpert-editorial[data-editorial-route="/contact-us"] a.redcarpert-contact-call:hover {
   text-underline-offset: 3px;
-}
-#main-container .redcarpert-editorial .redcarpert-map-call a:focus-visible {
-  outline-color: var(--redcarpert-control-focus);
 }
 @media (prefers-reduced-motion: reduce) {
   .redcarpert-editorial .redcarpert-editorial-action { transition: none; }
