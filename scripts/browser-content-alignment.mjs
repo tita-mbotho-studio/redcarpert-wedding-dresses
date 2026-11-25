@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
+import { assertDetailLayout } from './lib/assert-detail-layout.mjs';
 
 const root='http://localhost:4173/redcarpert-wedding-dresses';
 const allRoutes=JSON.parse(readFileSync('.generated/routes.json','utf8'));
@@ -63,6 +64,7 @@ try{
     assert.equal(before.border,'rgb(153, 0, 31)',width+'px active filter border');
    }
    if(route.startsWith('/product/preview/')){
+    await assertDetailLayout(page,width,route);
     assert(spacing.priceGap>=12&&spacing.priceGap<=16,width+'px '+route+' price group gap');
     assert.equal(spacing.priceGap,spacing.priceSeparator,width+'px '+route+' price separator symmetry');
     assert.equal(spacing.priceLabelGap,4,width+'px '+route+' price label gap');

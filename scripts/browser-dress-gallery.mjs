@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {chromium} from 'playwright';
+import { assertDetailLayout } from './lib/assert-detail-layout.mjs';
 import { displaySalePriceForDress, displayRentalPriceForDress, RENTAL_CONDITION_NOTE } from '../src/lib/pricing.ts';
 const ballGown03Photos=JSON.parse(readFileSync('src/data/client-ball-gowns.json','utf8'))
   .find(gown=>gown.id==='ball-gown-03').photos.map(photo=>photo.url);
@@ -166,6 +167,17 @@ try {
   await page.close();
  }
  console.log('Three-photo dress gallery PASS: arrows, dots, direct photo modal, keyboard and touch');
+ // Reproduce the reported Mary Girl layout at the exact tablet widths,
+ // adjacent breakpoint widths and ordinary mobile/desktop sizes.
+ const mary=await browser.newPage({viewport:{width:768,height:1024}});
+ try {
+   await mary.goto('http://localhost:4173/redcarpert-wedding-dresses/product/preview/ball-gown-mary-girl-dress/',{waitUntil:'domcontentloaded'});
+   await mary.evaluate(async()=>{await document.fonts.ready;});
+   for(const width of [320,390,767,768,820,834,900,1000,1001,1024,1032,1440]){
+     await mary.setViewportSize({width,height:width===1032?1376:1024});
+     await assertDetailLayout(mary,width,'Mary Girl Dress');
+   }
+ }finally{await mary.close();}
  // Check the real published Kwena client detail page and its live photo gallery.
  const actual=await browser.newPage({viewport:{width:1280,height:900}});
  const liveErrors=[];
@@ -181,6 +193,7 @@ try {
  for(const width of [1920,1440,1280,1100,1051,1050,900,768,640,390,320]){
    await actual.setViewportSize({width,height:900});
    await assertGalleryArrowsCentered(liveGallery,width,'2 in 1 Kwena');
+   await assertDetailLayout(actual,width,'2 in 1 Kwena');
    const alignment=await actual.locator('.redcarpert-detail-card').evaluate(card=>{
      const selectors=['.redcarpert-detail-collection','h1.redcarpert-detail-name',
        '.redcarpert-detail-price-label','.redcarpert-detail-price-value'];

@@ -205,3 +205,18 @@ test('legacy or mutated donor layouts and unrecognized client mappings fail clos
     assert.throws(()=>createProductDetailPreview(sitePages['/product/arabella'],{...dress,...changes}),/incompatible/);
   }
 });
+
+
+test('dress detail grid keeps tablet and desktop pricing beside the gallery and stacks only on phones',()=>{
+ const css=readFileSync('src/components/ProductDetailPreview.css','utf8');
+ assert.match(css,/#main-container \[data-detail-preview\] \{[^}]*display: grid !important;[^}]*grid-template-columns: minmax\(0, 48fr\) minmax\(0, 46fr\);/s);
+ assert.match(css,/> \.images\[data-detail-gallery\] \{[^}]*grid-column: 1;[^}]*float: none !important;[^}]*width: 100% !important;/s);
+ assert.match(css,/> \.summary\.entry-summary\[data-redcarpert-detail-summary\] \{[^}]*grid-column: 2;[^}]*width: 100% !important;/s);
+ assert.match(css,/@media \(min-width: 768px\) and \(max-width: 1000px\) \{\s*#main-container \[data-detail-preview\] \{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1fr\);/s);
+ assert.match(css,/@media \(max-width: 767px\) \{\s*#main-container \[data-detail-preview\] \{[^}]*grid-template-columns: minmax\(0, 1fr\);/s);
+ assert.match(css,/> \.redcarpert-related-dresses \{\s*grid-column: 1 \/ -1;/);
+ const browser=readFileSync('scripts/browser-dress-gallery.mjs','utf8');
+ assert(browser.includes('ball-gown-mary-girl-dress/'));
+ assert(browser.includes('767,768,820,834,900,1000,1001,1024,1032'));
+ assert(readFileSync('scripts/browser-content-alignment.mjs','utf8').includes('await assertDetailLayout(page,width,route)'));
+});
