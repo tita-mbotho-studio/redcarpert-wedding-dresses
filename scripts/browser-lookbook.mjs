@@ -74,7 +74,7 @@ try {
   assert.equal(await next.textContent(),'','next control must have no visible text');
   // Check the rendered shared web/PDF link and category ink, independently
   // of the current visible leaf (the other book pages remain mounted).
-  const bookInk=await page.locator('.redcarpert-book-dress').first().evaluate(dress=>({
+  const bookInk=await page.locator('.redcarpert-book-dress[data-book-category=modern_tradition]').first().evaluate(dress=>({
     kind:getComputedStyle(dress.querySelector('.redcarpert-book-kicker')).color,
     link:getComputedStyle(dress.querySelector('a[href*="/product/preview/"]')).color,
   }));

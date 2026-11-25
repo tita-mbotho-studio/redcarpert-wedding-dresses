@@ -24,7 +24,8 @@ test('desktop and mobile navigation have visible focus and current-page decorati
 test('web and PDF lookbooks use the same readable category and link ink',()=>{
  const web=css('EditorialPages'),pdf=read('src/lib/luxury-lookbook.ts'),globals=read('src/styles/globals.css');
  assert(globals.includes('--redcarpert-editorial-link: #8d6845;'));
- assert.match(web,/\.redcarpert-book-kicker \{[^}]*color: var\(--redcarpert-text-secondary\);/s);
+ assert.match(web,/\.redcarpert-book-dress \.redcarpert-book-kicker \{[^}]*color: var\(--redcarpert-text-secondary\);/s);
+ assert.match(web,/\.redcarpert-book-kicker \{[^}]*color: var\(--book-gold\);/s);
  for(const selector of ['.redcarpert-book-copy a','.redcarpert-book-back-links a']){
   const start=web.indexOf(selector+' {');
   assert(start>=0);
