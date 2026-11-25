@@ -12,7 +12,11 @@ test('dark chrome uses existing color roles while preserving responsive footer a
  assert(footer.includes('color: var(--redcarpert-dark-text);'));
  assert(footer.includes('grid-template-columns: minmax(0, 45fr) minmax(0, 25fr) minmax(0, 30fr);'));
  assert(icons.includes('min-width: 44px !important;'));
- assert.match(icons,/\.redcarpert-footer-social-whatsapp:hover \{[^}]*color: var\(--redcarpert-dark-link-hover\);/s);
+ assert.match(icons,/\.redcarpert-footer-social-whatsapp\s*\{\s*color:\s*#f1f1f1;/);
+ assert.match(icons,/\.redcarpert-footer-social-whatsapp:hover\s*\{[^}]*color:\s*#fff;/);
+ // Preserve exact parity with shared neutral color roles, including literal brand exceptions.
+ assert(globals.includes('--redcarpert-dark-icon: #f1f1f1;'));
+ assert(globals.includes('--redcarpert-dark-link-hover: #fff;'));
 });
 test('desktop and mobile navigation have visible focus and current-page decoration without resizing',()=>{
  const icons=css('ModernIcons'),home=css('HomepageExperience');

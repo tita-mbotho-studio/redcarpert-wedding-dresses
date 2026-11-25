@@ -192,13 +192,13 @@
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp {
-  color: var(--redcarpert-dark-icon);
+  color: #f1f1f1;
   cursor: pointer;
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp:hover {
   /* The footer WhatsApp icon stays neutral, not a green floating CTA. */
-  color: var(--redcarpert-dark-link-hover);
+  color: #fff;
 }
 #footer[data-redcarpert-footer] .widget_media_image
 .redcarpert-footer-social-whatsapp:focus-visible {
