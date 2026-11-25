@@ -11,10 +11,22 @@ const browser=await chromium.launch({args:['--no-sandbox']});
 try{
  for(const width of [320,390,768,1024,1440]){
   const page=await browser.newPage({viewport:{width,height:900}});
+  const pageErrors=[];
+  page.on('pageerror',error=>pageErrors.push(error.message));
   for(const route of allRoutes){
+   pageErrors.length=0;
    const url=root+(route==='/'?'/':route+'/');
    const response=await page.goto(url,{waitUntil:'domcontentloaded'});
    assert.equal(response.status(),200,url);
+   // Wait for final font metrics before measuring centered text.
+   await page.evaluate(async()=>{await document.fonts.ready;});
+   const overflow=await page.evaluate(()=>({
+    viewport:document.documentElement.clientWidth,
+    root:document.documentElement.scrollWidth,
+    body:document.body.scrollWidth,
+   }));
+   assert(Math.max(overflow.root,overflow.body)<=overflow.viewport+2,
+     width+'px '+route+' horizontal overflow: '+JSON.stringify(overflow));
    const issues=await page.evaluate(()=>{
     const visible=el=>el.getClientRects().length>0&&getComputedStyle(el).visibility==='visible';
     const selectors='#main-container :is(h1,h2,h3,h4,h5,h6,p,figcaption,a.button,button,[role="status"],.price,.redcarpert-contact-call), #footer :is(.redcarpert-footer-heading,.redcarpert-footer-items a,.redcarpert-footer-tagline,.copyrights), #header .nav-menu a';
@@ -143,6 +155,7 @@ try{
     const links=await mobile.locator('a').evaluateAll(els=>els.map(el=>getComputedStyle(el).textAlign));
     assert(links.length>=6&&links.every(value=>value==='center'),'mobile menu labels must be centered');
    }
+   assert.deepEqual(pageErrors,[],width+'px '+route+' JavaScript errors');
   }
   await page.close();
   console.log('Global text alignment passed at '+width+'px');

@@ -279,7 +279,22 @@ export async function createLuxuryLookbookPdf(products: readonly CatalogueProduc
           return rect.top<frame.top-2 || rect.bottom>frame.bottom+2 ||
             rect.left<frame.left-2 || rect.right>frame.right+2;
         });
-        return outside || bottom.scrollHeight>bottom.clientHeight+2
+        // A flex child may be wider than its column even when the price-pair
+        // itself fits. Inspect the actual painted amounts and labels.
+        const priceTextOutside=[...fields].some(field=>{
+          const bounds=field.getBoundingClientRect();
+          const textNodes=field.querySelectorAll<HTMLElement>(".amount,.amount-label");
+          if(textNodes.length!==2) return true;
+          return [...textNodes].some(element=>{
+            const range=document.createRange();
+            range.selectNodeContents(element);
+            const lines=[...range.getClientRects()].filter(rect=>rect.width>0&&rect.height>0);
+            return lines.length===0 || lines.some(rect=>
+              rect.left<bounds.left-2 || rect.right>bounds.right+2 ||
+              rect.top<frame.top-2 || rect.bottom>frame.bottom+2);
+          });
+        });
+        return outside || priceTextOutside || bottom.scrollHeight>bottom.clientHeight+2
           ? [section.id+": pricing or disclaimer overflows PDF frame"] : [];
       });
     });
