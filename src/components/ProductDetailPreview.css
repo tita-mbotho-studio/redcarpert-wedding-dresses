@@ -32,10 +32,29 @@ body .redcarpert-dress-photo-dialog.redcarpert-dress-pointer-opened
   box-shadow: none !important;
 }
 
+/* Implementation 88 — own the detail layout instead of inheriting the
+   WooCommerce float breakpoint, which stacks the gallery on tablets. */
+#main-container [data-detail-preview] {
+  display: grid !important;
+  grid-template-columns: minmax(0, 48fr) minmax(0, 46fr);
+  column-gap: 6%;
+  align-items: start;
+}
+#main-container [data-detail-preview]::before,
 #main-container [data-detail-preview]::after {
-  content: "";
-  display: table;
-  clear: both;
+  content: none !important;
+  display: none !important;
+}
+#main-container [data-detail-preview] > .images[data-detail-gallery] {
+  box-sizing: border-box;
+  grid-column: 1;
+  grid-row: 1;
+  float: none !important;
+  clear: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  margin-inline: 0 !important;
 }
 #main-container [data-detail-preview] .redcarpert-multi-photo-slider {
   width: 100%;
@@ -176,8 +195,14 @@ body .redcarpert-dress-photo-dialog.redcarpert-dress-pointer-opened
 
 #main-container [data-detail-preview] > .summary.entry-summary[data-redcarpert-detail-summary] {
   box-sizing: border-box;
-  width: min(46%, 510px);
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  float: none !important;
+  clear: none !important;
+  width: 100% !important;
   max-width: 510px;
+  min-width: 0;
   margin: clamp(16px, 3vw, 46px) 0 28px;
   padding: 0;
   border: 0;
@@ -264,6 +289,7 @@ body .redcarpert-dress-photo-dialog.redcarpert-dress-pointer-opened
 /* Related dresses are a separate, full-width section below the photo and
    purchase/rental enquiry card. Only genuine same-category items appear. */
 #main-container [data-detail-preview] > .redcarpert-related-dresses {
+  grid-column: 1 / -1;
   box-sizing: border-box;
   display: block;
   clear: both;
@@ -537,11 +563,29 @@ body .redcarpert-dress-photo-dialog.redcarpert-dress-pointer-opened
   text-align: center;
 }
 
+/* Keep portrait tablets in the two-column layout. Give the information
+   card enough usable width for the complete, unwrapped ZAR rental range. */
+@media (min-width: 768px) and (max-width: 1000px) {
+  #main-container [data-detail-preview] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(16px, 3vw, 24px);
+  }
+  #main-container [data-detail-preview] .redcarpert-detail-card {
+    padding: clamp(16px, 2.2vw, 24px);
+  }
+  #main-container [data-detail-preview] .redcarpert-detail-price-option .redcarpert-detail-price-value {
+    font-size: clamp(18px, 2.35vw, 23px);
+  }
+}
 @media (max-width: 767px) {
+  #main-container [data-detail-preview] {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
   #main-container [data-detail-preview] > .summary.entry-summary[data-redcarpert-detail-summary] {
-    float: none;
-    clear: both;
-    width: 100%;
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
     max-width: 100%;
     margin: 26px auto 38px;
   }
