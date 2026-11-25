@@ -131,7 +131,6 @@
   padding: 20px 0;
   text-align: center;
 }
-#footer[data-redcarpert-footer] .copyrights,
 #footer[data-redcarpert-footer] .footer-nav {
   display: block;
   float: none;
@@ -145,6 +144,7 @@
 #footer[data-redcarpert-footer] .copyrights {
   box-sizing: border-box;
   display: block;
+  float: none;
   width: 100%;
   max-width: 100%;
   padding: 0;
@@ -205,10 +205,6 @@
   #footer[data-redcarpert-footer] .redcarpert-footer-columns > .col {
     overflow-wrap: anywhere;
   }
-  #footer[data-redcarpert-footer] .redcarpert-footer-columns > .col:first-child,
-  #footer[data-redcarpert-footer] .redcarpert-footer-columns > .col:last-child {
-    padding-right: 0;
-  }
   #footer[data-redcarpert-footer] .widget_media_image .social-icons li {
     flex-basis: 24px;
     width: 24px;
@@ -232,10 +228,6 @@
     /* Avoid breaking a word such as COLLECTIONS into individual lines. */
     overflow-wrap: normal;
     word-break: normal;
-  }
-  #footer[data-redcarpert-footer] .redcarpert-footer-columns > .col:first-child,
-  #footer[data-redcarpert-footer] .redcarpert-footer-columns > .col:last-child {
-    padding-right: 0;
   }
   #footer[data-redcarpert-footer] .redcarpert-footer-heading {
     margin-bottom: var(--redcarpert-space-8);

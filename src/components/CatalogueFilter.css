@@ -44,7 +44,6 @@
   }
   .redcarpert-catalogue-filter button {
     flex-basis:calc((100% - var(--redcarpert-filter-gap)) / 2);
-    min-height:44px;
     padding:var(--redcarpert-space-8) var(--redcarpert-space-6);
     font-size:11px;
     letter-spacing:0;

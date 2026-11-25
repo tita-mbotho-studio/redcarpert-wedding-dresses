@@ -151,7 +151,6 @@
 @media (max-width: 640px) {
   #main-container ul.products[data-catalogue-preview] li.product .woocommerce-loop-product__title.redcarpert-catalogue-title {
     min-height: 110px;
-    gap: var(--redcarpert-space-4);
     padding: var(--redcarpert-space-12) var(--redcarpert-space-6) !important;
   }
   #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-collection {
@@ -160,7 +159,6 @@
   }
   #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-divider {
     width: 48px;
-    margin: var(--redcarpert-space-4) 0;
   }
   #main-container ul.products[data-catalogue-preview] .redcarpert-catalogue-number {
     font-size: 11px;

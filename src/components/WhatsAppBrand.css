@@ -10,7 +10,8 @@
   --redcarpert-whatsapp-white: #FFFFFF;
 }
 
-/* The original green background and white icon, never dark green or black. */
+/* The original green background and white icon, never dark green or black.
+ * Keyboard focus is charcoal on light surfaces; it does not change brand fill. */
 #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger[data-whatsapp-send] {
   background: var(--redcarpert-whatsapp-green) !important;
   border-color: var(--redcarpert-whatsapp-border) !important;
@@ -21,7 +22,7 @@
   color: var(--redcarpert-whatsapp-white) !important;
 }
 #redcarpert-floating-whatsapp .redcarpert-whatsapp-float-trigger[data-whatsapp-send]:focus-visible {
-  outline: 2px solid var(--redcarpert-whatsapp-border);
+  outline: 2px solid var(--redcarpert-control-focus);
   outline-offset: 4px;
 }
 
@@ -43,7 +44,7 @@
 }
 #main-container .redcarpert-editorial .redcarpert-icon-cta > a.button.redcarpert-icon-cta-button[data-whatsapp-send]:focus-visible,
 #main-container [data-detail-preview] .redcarpert-detail-actions > a.button.redcarpert-detail-fitting-button[data-whatsapp-send]:focus-visible {
-  outline: 2px solid var(--redcarpert-whatsapp-border) !important;
+  outline: 2px solid var(--redcarpert-control-focus) !important;
   outline-offset: 3px;
 }
 
@@ -63,6 +64,6 @@
   color: var(--redcarpert-whatsapp-white) !important;
 }
 #main-container .redcarpert-editorial a.redcarpert-contact-number[data-whatsapp-send]:focus-visible {
-  outline: 2px solid var(--redcarpert-whatsapp-border);
+  outline: 2px solid var(--redcarpert-control-focus);
   outline-offset: 3px;
 }
